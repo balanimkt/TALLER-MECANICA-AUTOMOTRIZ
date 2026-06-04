@@ -1,1 +1,1026 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TallerPro CRM — Taller Automotriz</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+:root{
+  --primary:#2563eb;
+  --primary-2:#1d4ed8;
+  --primary-soft:#eff6ff;
+  --dark:#0f172a;
+  --muted:#64748b;
+  --body:#f6f8fb;
+  --panel:#ffffff;
+  --line:#e5e7eb;
+  --success:#16a34a;
+  --warning:#f59e0b;
+  --danger:#dc2626;
+  --radius:18px;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--body);
+  font-family:Inter,Segoe UI,system-ui,-apple-system,Arial,sans-serif;
+  color:#1e293b;
+  font-size:14px;
+}
+.app-shell{display:flex;min-height:100vh}
+.sidebar{
+  width:280px;
+  background:#0f172a;
+  color:#cbd5e1;
+  position:fixed;
+  inset:0 auto 0 0;
+  overflow:auto;
+  z-index:10;
+  box-shadow:10px 0 30px rgba(15,23,42,.14);
+}
+.brand{
+  padding:24px 22px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.brand-wrap{display:flex;align-items:center;gap:14px}
+.mark{
+  width:50px;height:50px;border-radius:16px;
+  background:linear-gradient(145deg,#38bdf8,#2563eb 55%,#1e40af);
+  display:grid;place-items:center;color:white;font-weight:900;
+  box-shadow:0 12px 30px rgba(37,99,235,.45);
+}
+.brand h1{font-size:20px;margin:0;color:white;letter-spacing:.2px}
+.brand p{font-size:11px;margin:2px 0 0;color:#94a3b8}
+.nav-group{padding:18px 16px 6px;font-size:11px;color:#64748b;text-transform:uppercase;font-weight:800;letter-spacing:.9px}
+.nav-itemx{
+  margin:3px 12px;
+  border-radius:14px;
+  padding:11px 13px;
+  display:flex;align-items:center;gap:12px;
+  color:#cbd5e1;text-decoration:none;
+  cursor:pointer;
+  transition:.18s ease;
+}
+.nav-itemx i{font-size:17px;width:22px;text-align:center}
+.nav-itemx:hover{background:rgba(255,255,255,.08);color:white;transform:translateX(2px)}
+.nav-itemx.active{
+  background:linear-gradient(135deg,#2563eb,#1d4ed8);
+  color:white;
+  box-shadow:0 10px 24px rgba(37,99,235,.28);
+}
+.content{
+  margin-left:280px;
+  min-height:100vh;
+  width:calc(100% - 280px);
+}
+.topbar{
+  height:74px;background:rgba(255,255,255,.86);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+  position:sticky;top:0;z-index:8;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 32px;
+}
+.page-title h2{font-size:21px;margin:0;color:var(--dark);font-weight:800}
+.page-title p{font-size:12px;margin:3px 0 0;color:var(--muted)}
+.user-pill{
+  display:flex;align-items:center;gap:10px;
+  background:#f8fafc;border:1px solid var(--line);
+  padding:8px 12px;border-radius:999px;color:#334155;font-weight:700;
+}
+.main{padding:28px 32px 48px}
+.hero{
+  border-radius:28px;
+  padding:30px;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(56,189,248,.28), transparent 30%),
+    radial-gradient(circle at 85% 20%, rgba(37,99,235,.24), transparent 32%),
+    linear-gradient(135deg,#0f172a,#1e293b);
+  color:white;
+  overflow:hidden;
+  position:relative;
+  box-shadow:0 22px 50px rgba(15,23,42,.18);
+}
+.hero:after{
+  content:"";
+  position:absolute;right:-80px;bottom:-80px;width:270px;height:270px;
+  background:rgba(255,255,255,.06);border-radius:50%;
+}
+.hero h3{font-size:29px;font-weight:900;margin:0}
+.hero p{color:#cbd5e1;max-width:760px;margin:10px 0 0;font-size:15px}
+.hero-actions{display:flex;gap:12px;margin-top:22px;flex-wrap:wrap}
+.btn-premium{
+  border:0;border-radius:14px;padding:11px 18px;font-weight:800;
+  background:linear-gradient(135deg,#38bdf8,#2563eb);
+  color:white;
+  box-shadow:0 12px 26px rgba(37,99,235,.28);
+}
+.btn-premium:hover{color:white;transform:translateY(-1px)}
+.btn-ghost{
+  border:1px solid rgba(255,255,255,.22);
+  background:rgba(255,255,255,.08);
+  color:white;border-radius:14px;padding:11px 18px;font-weight:800;
+}
+.btn-soft{
+  border:1px solid var(--line);
+  background:white;
+  color:#334155;
+  border-radius:13px;
+  padding:9px 14px;
+  font-weight:800;
+}
+.btn-blue{
+  background:var(--primary);
+  color:white;border:0;border-radius:13px;
+  padding:10px 16px;font-weight:800;
+}
+.btn-blue:hover{background:var(--primary-2);color:white}
+.cardx{
+  background:var(--panel);
+  border:1px solid rgba(226,232,240,.8);
+  border-radius:var(--radius);
+  box-shadow:0 10px 26px rgba(15,23,42,.06);
+}
+.stat{
+  padding:19px;
+  display:flex;align-items:center;gap:14px;
+}
+.iconbox{
+  width:47px;height:47px;border-radius:15px;display:grid;place-items:center;font-size:20px;
+}
+.stat small{color:var(--muted);font-weight:700}
+.stat h4{margin:0;font-size:24px;font-weight:900;color:var(--dark)}
+.stat .trend{font-size:11px;color:var(--success);font-weight:800}
+.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:12px}
+.section-head h4{margin:0;font-size:20px;font-weight:900;color:var(--dark)}
+.section-head p{margin:2px 0 0;color:var(--muted);font-size:12px}
+.table-modern{margin:0}
+.table-modern thead th{
+  background:#f8fafc!important;
+  color:#64748b;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  border-bottom:1px solid var(--line);
+  padding:13px 16px;
+}
+.table-modern tbody td{
+  padding:15px 16px;
+  vertical-align:middle;
+  border-color:#eef2f7;
+}
+.table-modern tbody tr:hover{background:#f8fafc}
+.order-id{font-weight:900;color:var(--primary)}
+.vehículo{font-weight:800;color:#334155}
+.subtext{font-size:12px;color:#94a3b8}
+.badgex{
+  display:inline-flex;align-items:center;gap:6px;
+  border-radius:999px;padding:6px 10px;
+  font-size:11px;font-weight:900;
+}
+.b-rec{background:#dbeafe;color:#1d4ed8}.b-pro{background:#fef3c7;color:#92400e}
+.b-ok{background:#dcfce7;color:#166534}.b-danger{background:#fee2e2;color:#991b1b}
+.b-gray{background:#f1f5f9;color:#475569}
+.screen{display:none}.screen.active{display:block}
+.form-card{padding:24px}
+.form-section-title{font-size:14px;color:#0f172a;font-weight:900;margin-bottom:13px;display:flex;align-items:center;gap:8px}
+.form-control,.form-select{
+  border-radius:13px;
+  border:1px solid #dbe3ef;
+  padding:11px 13px;
+}
+.form-control:focus,.form-select:focus{box-shadow:0 0 0 .2rem rgba(37,99,235,.12);border-color:#93c5fd}
+.detail-header{
+  background:linear-gradient(135deg,#ffffff,#f8fbff);
+  border:1px solid #dbeafe;
+  border-radius:22px;
+  padding:22px;
+  box-shadow:0 10px 26px rgba(15,23,42,.05);
+}
+.total-card{text-align:center;padding:18px}
+.total-card small{color:var(--muted);font-weight:800}
+.total-card h3{font-size:24px;margin:4px 0 0;font-weight:900}
+.kanban{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.kanban-col{
+  border:1px solid #e2e8f0;
+  background:#f8fafc;
+  border-radius:22px;
+  padding:15px;
+  min-height:390px;
+}
+.kanban-col h5{font-size:14px;font-weight:900;color:#334155;margin-bottom:14px}
+.ticket{
+  background:white;
+  border-radius:18px;
+  padding:15px;
+  margin-bottom:13px;
+  border:1px solid #e2e8f0;
+  box-shadow:0 8px 18px rgba(15,23,42,.05);
+}
+.ticket b{color:#0f172a}.ticket .bar{height:7px;border-radius:999px;background:#dbeafe;margin-top:12px;overflow:hidden}
+.ticket .bar span{display:block;height:100%;background:var(--primary);border-radius:999px}
+.module-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.module-card{padding:22px;transition:.18s}
+.module-card:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(15,23,42,.09)}
+.module-card i{font-size:26px;color:var(--primary)}
+.module-card h5{font-weight:900;margin:12px 0 4px;color:var(--dark)}
+.module-card p{color:var(--muted);margin:0;font-size:13px}
+.searchbar{
+  background:white;border:1px solid var(--line);border-radius:18px;padding:14px;
+}
+.demo-note{
+  background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:16px;padding:13px 16px;font-weight:700;
+}
+@media(max-width:1100px){
+  .kanban,.module-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:900px){
+  .sidebar{width:0;transform:translateX(-100%)}
+  .content{margin-left:0;width:100%}
+  .kanban,.module-grid{grid-template-columns:1fr}
+  .topbar{padding:0 18px}.main{padding:22px 16px}
+}
 
+.mobile-menu-btn{
+  display:none;
+  width:42px;height:42px;border-radius:13px;border:1px solid var(--line);
+  background:white;color:#0f172a;align-items:center;justify-content:center;font-size:22px;
+}
+.mobile-backdrop{
+  display:none;position:fixed;inset:0;background:rgba(15,23,42,.52);z-index:9;
+}
+.mobile-bottom-nav{
+  display:none;position:fixed;left:0;right:0;bottom:0;height:68px;background:white;
+  border-top:1px solid var(--line);z-index:20;box-shadow:0 -10px 30px rgba(15,23,42,.12);
+  grid-template-columns:repeat(4,1fr);
+}
+.mobile-bottom-nav button{
+  border:0;background:white;color:#64748b;font-size:11px;font-weight:800;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+}
+.mobile-bottom-nav i{font-size:20px}
+.mobile-bottom-nav button.active{color:var(--primary)}
+.mobile-close{
+  display:none;
+  position:absolute;right:14px;top:18px;border:0;background:rgba(255,255,255,.1);
+  color:white;width:38px;height:38px;border-radius:12px;font-size:20px;
+}
+@media(max-width:900px){
+  body{padding-bottom:78px}
+  .mobile-menu-btn,.mobile-close{display:flex}
+  .topbar{height:auto;min-height:70px;gap:12px}
+  .page-title h2{font-size:18px}
+  .page-title p{display:none}
+  .sidebar{
+    width:286px;
+    transform:translateX(-105%);
+    transition:transform .25s ease;
+  }
+  .sidebar.open{transform:translateX(0)}
+  .mobile-backdrop.show{display:block}
+  .mobile-bottom-nav{display:grid}
+  .content{margin-left:0;width:100%}
+  .main{padding:18px 14px 92px}
+  .hero{padding:22px;border-radius:22px}
+  .hero h3{font-size:23px}
+  .hero p{font-size:13px}
+  .hero-actions .btn-premium,.hero-actions .btn-ghost{width:100%;text-align:center}
+  .cardx{border-radius:16px}
+  .stat{padding:14px}
+  .stat h4{font-size:19px}
+  .iconbox{width:40px;height:40px;border-radius:13px}
+  .section-head{align-items:flex-start;flex-direction:column}
+  .section-head .btn,.section-head button{width:100%}
+  .table-responsive{
+    border:1px solid var(--line);
+    border-radius:14px;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .table-modern{min-width:760px}
+  .searchbar .btn{width:100%}
+  .detail-header{padding:17px;border-radius:18px}
+  .detail-header h3{font-size:20px}
+  .detail-header .btn{flex:1}
+  .form-card{padding:18px}
+  .user-pill{font-size:0;width:42px;height:42px;justify-content:center;padding:0}
+  .user-pill i{font-size:20px}
+}
+@media(max-width:520px){
+  .topbar{padding:10px 12px}
+  .page-title h2{font-size:16px}
+  .main{padding-left:10px;padding-right:10px}
+  .hero h3{font-size:21px}
+  .row.g-3>[class*="col-6"]{padding-left:6px;padding-right:6px}
+  .stat{gap:9px}
+  .stat small{font-size:11px}
+  .stat h4{font-size:17px}
+  .module-grid,.kanban{grid-template-columns:1fr}
+}
+
+
+/* ===== MEJORAS SOLO PARA TELÉFONO: no afectan escritorio ===== */
+.mobile-quick-title{display:none}
+.mobile-card-list{display:none}
+@media(max-width:900px){
+  .mobile-quick-title{
+    display:flex;align-items:center;justify-content:space-between;
+    background:linear-gradient(135deg,#0f172a,#1e293b);
+    color:white;border-radius:20px;padding:16px;margin-bottom:14px;
+    box-shadow:0 16px 34px rgba(15,23,42,.18);
+  }
+  .mobile-quick-title b{font-size:16px}
+  .mobile-quick-title span{font-size:11px;color:#cbd5e1}
+  .mobile-quick-title i{
+    width:42px;height:42px;border-radius:14px;
+    background:rgba(255,255,255,.12);
+    display:grid;place-items:center;font-size:22px;
+  }
+  .hero{
+    margin-left:0;margin-right:0;
+    padding:20px;
+    min-height:auto;
+  }
+  .hero h3{line-height:1.15}
+  .hero p{line-height:1.45}
+  .hero-actions{margin-top:17px}
+  .row.g-3.mb-4{margin-left:-5px;margin-right:-5px}
+  .row.g-3.mb-4>[class*="col-"]{padding-left:5px;padding-right:5px}
+  .stat{
+    min-height:104px;
+    flex-direction:column;
+    align-items:flex-start;
+    justify-content:space-between;
+  }
+  .stat .trend{font-size:10px}
+  .section-head h4{font-size:18px}
+  .section-head p{font-size:12px}
+  .cardx.p-3,.cardx.p-4{padding:16px!important}
+  .module-grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:12px;
+  }
+  .module-card{
+    padding:18px;
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+  }
+  .module-card i{
+    width:44px;height:44px;border-radius:14px;
+    background:#eff6ff;
+    display:grid;place-items:center;
+    flex:none;
+  }
+  .module-card h5{margin:0 0 4px;font-size:15px}
+  .module-card p{font-size:12px;line-height:1.4}
+  .kanban{
+    display:flex!important;
+    overflow-x:auto;
+    gap:12px;
+    padding-bottom:8px;
+    scroll-snap-type:x mandatory;
+  }
+  .kanban-col{
+    min-width:82%;
+    scroll-snap-align:start;
+    min-height:310px;
+  }
+  .ticket{padding:14px;border-radius:16px}
+  .detail-header .d-flex.gap-2{width:100%}
+  .detail-header .d-flex.gap-2 .btn{
+    min-width:31%;
+    font-size:12px;
+    padding:9px 7px;
+  }
+  .total-card{
+    min-height:95px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+  }
+  .total-card h3{font-size:21px}
+  .form-section-title{margin-top:6px}
+  .form-control,.form-select{font-size:14px}
+  .searchbar{padding:12px;border-radius:16px}
+  /* Tablas bonitas como tarjetas en móvil */
+  .table-responsive.mobile-hide-table{display:none!important}
+  .mobile-card-list{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:12px;
+  }
+  .mobile-data-card{
+    background:white;
+    border:1px solid #e2e8f0;
+    border-radius:18px;
+    padding:15px;
+    box-shadow:0 8px 20px rgba(15,23,42,.06);
+  }
+  .mobile-data-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:10px;
+    margin-bottom:8px;
+  }
+  .mobile-data-top b{
+    color:#0f172a;
+    font-size:15px;
+  }
+  .mobile-data-card .line{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    padding:7px 0;
+    border-bottom:1px dashed #e2e8f0;
+    font-size:12px;
+  }
+  .mobile-data-card .line:last-child{border-bottom:0}
+  .mobile-data-card .line span:first-child{color:#64748b;font-weight:800}
+  .mobile-data-card .line span:last-child{text-align:right;color:#334155;font-weight:700}
+  .mobile-data-actions{
+    margin-top:12px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+  }
+  .mobile-data-actions .btn{
+    border-radius:12px;
+    font-size:12px;
+    font-weight:800;
+  }
+  .mobile-bottom-nav{
+    height:74px;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  .mobile-bottom-nav button{
+    border-radius:0;
+  }
+  .sidebar{
+    border-top-right-radius:24px;
+    border-bottom-right-radius:24px;
+  }
+  .nav-itemx{
+    padding:12px 14px;
+  }
+}
+@media(max-width:520px){
+  .hero{border-radius:20px}
+  .hero h3{font-size:20px}
+  .hero-actions{gap:8px}
+  .btn-premium,.btn-ghost,.btn-blue,.btn-soft{border-radius:12px}
+  .stat small{line-height:1.15}
+  .stat h4{font-size:18px}
+  .section-head h4{font-size:17px}
+  .mobile-data-card{padding:14px}
+  .kanban-col{min-width:88%}
+}
+
+
+/* ===== CORRECCIÓN MENÚ MÓVIL: ocultar barra inferior cuando el menú está abierto ===== */
+@media(max-width:900px){
+  body.menu-open .mobile-bottom-nav{
+    transform:translateY(120%);
+    pointer-events:none;
+    opacity:0;
+  }
+  .mobile-bottom-nav{
+    transition:transform .22s ease, opacity .22s ease;
+  }
+  .sidebar{
+    padding-bottom:120px;
+    max-height:100dvh;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .sidebar.open{
+    box-shadow:18px 0 42px rgba(15,23,42,.32);
+  }
+  .nav-itemx{
+    min-height:46px;
+  }
+  .brand{
+    position:sticky;
+    top:0;
+    z-index:2;
+    background:#0f172a;
+  }
+}
+
+</style>
+</head>
+<body>
+<div class="mobile-backdrop" id="mobileBackdrop" onclick="toggleMenu(false)"></div>
+<div class="app-shell">
+
+<aside class="sidebar" id="sidebar">
+  <button class="mobile-close" onclick="toggleMenu(false)"><i class="bi bi-x-lg"></i></button>
+  <div class="brand">
+    <div class="brand-wrap">
+      <div class="mark">TP</div>
+      <div>
+        <h1>TallerPro CRM</h1>
+        <p>Software para talleres automotrices</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-group">Principal</div>
+  <a class="nav-itemx active" onclick="showScreen('dashboard',this)"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
+  <a class="nav-itemx" onclick="showScreen('presentacion',this)"><i class="bi bi-stars"></i> Presentación</a>
+
+  <div class="nav-group">Órdenes</div>
+  <a class="nav-itemx" onclick="showScreen('ordenes',this)"><i class="bi bi-clipboard2-check"></i> Órdenes de trabajo</a>
+  <a class="nav-itemx" onclick="showScreen('crear',this)"><i class="bi bi-plus-circle"></i> Nueva orden</a>
+  <a class="nav-itemx" onclick="showScreen('detalle',this)"><i class="bi bi-file-earmark-text"></i> Detalle de orden</a>
+  <a class="nav-itemx" onclick="showScreen('pizarra',this)"><i class="bi bi-kanban"></i> Pizarra de operación</a>
+
+  <div class="nav-group">Operación</div>
+  <a class="nav-itemx" onclick="showScreen('repuestos',this)"><i class="bi bi-box-seam"></i> Repuestos</a>
+  <a class="nav-itemx" onclick="showScreen('mano',this)"><i class="bi bi-tools"></i> Mano de obra</a>
+  <a class="nav-itemx" onclick="showScreen('bodega',this)"><i class="bi bi-arrow-left-right"></i> Bodega / Kardex</a>
+
+  <div class="nav-group">Administración</div>
+  <a class="nav-itemx" onclick="showScreen('clientes',this)"><i class="bi bi-people"></i> Clientes</a>
+  <a class="nav-itemx" onclick="showScreen('mecanicos',this)"><i class="bi bi-person-badge"></i> Mecánicos</a>
+  <a class="nav-itemx" onclick="showScreen('cobrar',this)"><i class="bi bi-cash-coin"></i> Cuentas por cobrar</a>
+</aside>
+
+<section class="content">
+  <header class="topbar">
+    <button class="mobile-menu-btn" onclick="toggleMenu(true)"><i class="bi bi-list"></i></button>
+    <div class="page-title">
+      <h2 id="pageTitle">Dashboard</h2>
+      <p id="pageSubtitle">Control operativo, financiero y técnico del taller automotriz</p>
+    </div>
+    <div class="d-flex gap-2 align-items-center">
+      <button class="btn btn-soft d-none d-md-inline-flex"><i class="bi bi-bell"></i></button>
+      <div class="user-pill"><i class="bi bi-person-circle"></i> Administrador</div>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <section id="dashboard" class="screen active">
+      <div class="mobile-quick-title"><div><b>Inicio</b><br><span>Resumen general del taller</span></div><i class="bi bi-speedometer2"></i></div>
+
+      <div class="hero mb-4">
+        <h3>Panel inteligente para talleres automotrices</h3>
+        <p>Administra órdenes de trabajo, diagnósticos, mantenimientos, repuestos, técnicos, abonos, cuentas por cobrar y reportes desde una sola plataforma profesional.</p>
+        <div class="hero-actions">
+          <button class="btn-premium" onclick="showScreen('crear')"><i class="bi bi-plus-circle me-1"></i> Crear orden</button>
+          <button class="btn-ghost" onclick="showScreen('presentacion')"><i class="bi bi-play-circle me-1"></i> Ver presentación</button>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-xl-2"><div class="cardx stat"><div class="iconbox bg-primary-subtle text-primary"><i class="bi bi-clipboard2-check"></i></div><div><small>Total órdenes</small><h4>23</h4><div class="trend">+2 hoy</div></div></div></div>
+        <div class="col-6 col-xl-2"><div class="cardx stat"><div class="iconbox bg-info-subtle text-info"><i class="bi bi-clock-history"></i></div><div><small>En proceso</small><h4>20</h4><div class="trend">Activo</div></div></div></div>
+        <div class="col-6 col-xl-2"><div class="cardx stat"><div class="iconbox bg-success-subtle text-success"><i class="bi bi-people"></i></div><div><small>Clientes</small><h4>1.028</h4><div class="trend">Base real</div></div></div></div>
+        <div class="col-6 col-xl-2"><div class="cardx stat"><div class="iconbox bg-warning-subtle text-warning"><i class="bi bi-wallet2"></i></div><div><small>Parciales</small><h4>7</h4><div class="trend">Abonos</div></div></div></div>
+        <div class="col-6 col-xl-2"><div class="cardx stat"><div class="iconbox bg-danger-subtle text-danger"><i class="bi bi-cash-stack"></i></div><div><small>Por cobrar</small><h4>$2.140</h4><div class="trend text-danger">Pendiente</div></div></div></div>
+        <div class="col-6 col-xl-2"><div class="cardx stat"><div class="iconbox bg-success-subtle text-success"><i class="bi bi-receipt"></i></div><div><small>Facturado</small><h4>$3.850</h4><div class="trend">Mes actual</div></div></div></div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-xl-8">
+          <div class="cardx p-3">
+            <div class="section-head">
+              <div><h4>Últimas órdenes</h4><p>Resumen de trabajos ingresados y estado de cuenta</p></div>
+              <button class="btn btn-blue" onclick="showScreen('ordenes')"><i class="bi bi-eye me-1"></i> Ver todas</button>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-modern align-middle">
+                <thead><tr><th>OT</th><th>Vehículo / servicio</th><th>Mecánico</th><th>Estado</th><th>Cuenta</th><th class="text-end">Total</th></tr></thead>
+                <tbody id="ordersDashboard"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4">
+          <div class="cardx p-4 h-100">
+            <div class="section-head"><div><h4>Estados</h4><p>Distribución actual</p></div></div>
+            <div class="mb-3">
+              <div class="d-flex justify-content-between fw-bold mb-1"><span>Recibido</span><span>74%</span></div>
+              <div class="progress rounded-pill" style="height:10px"><div class="progress-bar" style="width:74%"></div></div>
+            </div>
+            <div class="mb-3">
+              <div class="d-flex justify-content-between fw-bold mb-1"><span>En proceso</span><span>13%</span></div>
+              <div class="progress rounded-pill" style="height:10px"><div class="progress-bar bg-warning" style="width:13%"></div></div>
+            </div>
+            <div class="mb-3">
+              <div class="d-flex justify-content-between fw-bold mb-1"><span>Anulado</span><span>13%</span></div>
+              <div class="progress rounded-pill" style="height:10px"><div class="progress-bar bg-danger" style="width:13%"></div></div>
+            </div>
+            <div class="demo-note mt-4"><i class="bi bi-info-circle me-1"></i> Demo visual. La versión real se conecta a base de datos, usuarios y reportes.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="presentacion" class="screen">
+      <div class="mobile-quick-title"><div><b>Presentación</b><br><span>Vista comercial del software</span></div><i class="bi bi-stars"></i></div>
+
+      <div class="hero mb-4">
+        <h3>TallerPro CRM: una plataforma lista para vender por suscripción</h3>
+        <p>Diseñada para talleres automotrices que necesitan controlar citas, diagnósticos, reparaciones, mantenimiento, inventario, finanzas y comunicación con clientes sin depender de hojas sueltas.</p>
+        <div class="hero-actions">
+          <button class="btn-premium"><i class="bi bi-whatsapp me-1"></i> Solicitar demostración</button>
+          <button class="btn-ghost" onclick="showScreen('dashboard')">Ingresar al demo</button>
+        </div>
+      </div>
+      <div class="module-grid">
+        <div class="cardx module-card"><i class="bi bi-clipboard2-check"></i><h5>Órdenes inteligentes</h5><p>Registro completo del cliente, vehículo, placa, kilometraje, diagnóstico, fotos, servicios y valores.</p></div>
+        <div class="cardx module-card"><i class="bi bi-kanban"></i><h5>Pizarra de operación</h5><p>Seguimiento visual del trabajo: recibido, diagnóstico, en reparación, terminado y entregado.</p></div>
+        <div class="cardx module-card"><i class="bi bi-cash-coin"></i><h5>Control financiero</h5><p>Abonos, saldos pendientes, cuentas por cobrar y facturación.</p></div>
+        <div class="cardx module-card"><i class="bi bi-box-seam"></i><h5>Inventario y bodega</h5><p>Control de filtros, aceite, bujías, pastillas, discos, embragues, repuestos y kardex.</p></div>
+        <div class="cardx module-card"><i class="bi bi-person-workspace"></i><h5>Técnicos y mecánicos</h5><p>Asignación de trabajos, especialidades, productividad y control por responsable.</p></div>
+        <div class="cardx module-card"><i class="bi bi-qr-code"></i><h5>Seguimiento por WhatsApp / QR</h5><p>Consulta del avance, evidencia fotográfica, aprobación de cotización y estado de entrega.</p></div>
+      </div>
+    </section>
+
+    <section id="ordenes" class="screen">
+      <div class="mobile-quick-title"><div><b>Órdenes</b><br><span>Trabajos activos y estados</span></div><i class="bi bi-clipboard2-check"></i></div>
+
+      <div class="cardx p-4">
+        <div class="section-head">
+          <div><h4>Órdenes de trabajo</h4><p>Consulta, filtra y gestiona todos los trabajos del taller.</p></div>
+          <button class="btn btn-blue" onclick="showScreen('crear')"><i class="bi bi-plus-circle me-1"></i> Nueva orden</button>
+        </div>
+        <div class="searchbar mb-3">
+          <div class="row g-2">
+            <div class="col-md-4"><input class="form-control" placeholder="Buscar por cliente, vehículo, mecánico o número de OT"></div>
+            <div class="col-md-2"><select class="form-select"><option>Todos los estados</option><option>Recibido</option><option>En proceso</option></select></div>
+            <div class="col-md-2"><input type="date" class="form-control"></div>
+            <div class="col-md-2"><input type="date" class="form-control"></div>
+            <div class="col-md-2"><button class="btn btn-blue w-100"><i class="bi bi-search me-1"></i> Buscar</button></div>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-modern align-middle">
+            <thead><tr><th>OT</th><th>Fecha</th><th>Cliente</th><th>Vehículo / servicio</th><th>Mecánico</th><th>Img</th><th>Estado</th><th>Cuenta</th><th class="text-end">Total</th><th></th></tr></thead>
+            <tbody id="ordersList"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="crear" class="screen">
+      <div class="mobile-quick-title"><div><b>Nueva orden</b><br><span>Registro rápido de trabajo</span></div><i class="bi bi-plus-circle"></i></div>
+
+      <div class="cardx form-card">
+        <div class="section-head">
+          <div><h4>Nueva orden de trabajo <span class="badgex b-rec">OT #1057</span></h4><p>Registra cliente, vehículo, diagnóstico, fechas y responsable.</p></div>
+          <button class="btn btn-soft" onclick="showScreen('ordenes')"><i class="bi bi-arrow-left me-1"></i> Volver</button>
+        </div>
+        <div class="row g-4">
+          <div class="col-lg-6">
+            <div class="form-section-title"><i class="bi bi-person"></i> Datos del cliente</div>
+            <div class="row g-2 mb-3"><div class="col-md-8"><input class="form-control" placeholder="Buscar cliente por nombre, RUC o teléfono"></div><div class="col-md-4"><button class="btn btn-blue w-100">Nuevo</button></div></div>
+            <input class="form-control mb-3" placeholder="DIEGO ALEJANDRO VERA o referencia">
+            <div class="form-section-title"><i class="bi bi-clipboard-pulse"></i> Diagnóstico y observaciones</div>
+            <textarea class="form-control mb-3" rows="4" placeholder="Diagnóstico inicial del vehículo..."></textarea>
+            <textarea class="form-control" rows="3" placeholder="Observaciones internas"></textarea>
+          </div>
+          <div class="col-lg-6">
+            <div class="form-section-title"><i class="bi bi-gear-wide-connected"></i> Datos del vehículo</div>
+            <div class="row g-2 mb-3">
+              <div class="col-md-6"><input class="form-control" placeholder="Placa / identificación"></div>
+              <div class="col-md-6"><input class="form-control" placeholder="Vehículo"></div>
+            </div>
+            <select class="form-select mb-3"><option>Seleccionar vehículo</option><option>Mantenimiento preventivo</option><option>Cambio de discos de embrague</option><option>Mantenimiento de frenos</option><option>Alineación y balanceo</option><option>Escáner automotriz</option><option>Cambio de bujías</option><option>Reparación interna de motor</option><option>Mantenimiento de dirección</option><option>Mantenimiento de caja de cambios</option></select>
+            <select class="form-select mb-3"><option>Tipo de ingreso: cliente directo</option><option>Vehículo referido</option><option>Flota / empresa</option></select>
+            <div class="form-section-title"><i class="bi bi-person-badge"></i> Responsable y fechas</div>
+            <select class="form-select mb-3"><option>Mecánico responsable</option><option>CARLOS MENDOZA</option><option>FERNANDO MORALES</option><option>JORGE RAMÍREZ</option></select>
+            <div class="row g-2">
+              <div class="col-md-6"><label class="subtext">Ingreso</label><input type="datetime-local" class="form-control"></div>
+              <div class="col-md-6"><label class="subtext">Entrega estimada</label><input type="datetime-local" class="form-control"></div>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-end gap-2 mt-4">
+          <button class="btn btn-soft">Guardar borrador</button>
+          <button class="btn btn-blue" onclick="alert('Demo visual: aquí se guardaría la orden en la base de datos.')"><i class="bi bi-check2-circle me-1"></i> Crear orden</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="detalle" class="screen">
+      <div class="mobile-quick-title"><div><b>Detalle</b><br><span>Información completa de la OT</span></div><i class="bi bi-file-earmark-text"></i></div>
+
+      <div class="detail-header mb-4">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+          <div>
+            <h3 class="mb-1 fw-black">Orden de trabajo #1054 <span class="badgex b-rec">Recibido</span></h3>
+            <p class="mb-0 text-muted">Chevrolet D-Max · mantenimiento general · CARLOS MENDOZA · Ingreso 03/06/2026</p>
+          </div>
+          <div class="d-flex gap-2 flex-wrap">
+            <button class="btn btn-soft"><i class="bi bi-printer me-1"></i> Imprimir</button>
+            <button class="btn btn-soft"><i class="bi bi-camera me-1"></i> Fotos</button>
+            <button class="btn btn-blue"><i class="bi bi-receipt me-1"></i> Facturar</button>
+          </div>
+        </div>
+      </div>
+      <div class="row g-3 mb-4">
+        <div class="col-md-3"><div class="cardx total-card"><small>Total orden</small><h3>$684.50</h3></div></div>
+        <div class="col-md-3"><div class="cardx total-card"><small>Abonado</small><h3 class="text-success">$0.00</h3></div></div>
+        <div class="col-md-3"><div class="cardx total-card"><small>Saldo</small><h3 class="text-danger">$684.50</h3></div></div>
+        <div class="col-md-3"><div class="cardx total-card"><small>Estado cuenta</small><br><span class="badgex b-danger mt-2">Pendiente</span></div></div>
+      </div>
+      <div class="cardx p-4 mb-4">
+        <div class="row g-4">
+          <div class="col-lg-6">
+            <h5 class="fw-bold">Información técnica</h5>
+            <table class="table table-modern"><tbody><tr><td>Vehículo / servicio</td><td class="fw-bold">Chevrolet D-Max · mantenimiento general</td></tr><tr><td>Diagnóstico</td><td>Diagnóstico general, mantenimiento preventivo y revisión del sistema mecánico.</td></tr><tr><td>Observaciones</td><td>Trabajo pendiente de validación técnica.</td></tr></tbody></table>
+          </div>
+          <div class="col-lg-6">
+            <h5 class="fw-bold">Cliente y responsable</h5>
+            <table class="table table-modern"><tbody><tr><td>Cliente</td><td class="fw-bold">DIEGO ALEJANDRO VERA</td></tr><tr><td>Mecánico</td><td>CARLOS MENDOZA</td></tr><tr><td>Usuario</td><td>Administrador</td></tr></tbody></table>
+          </div>
+        </div>
+      </div>
+      <div class="cardx p-4">
+        <div class="section-head"><div><h4>Trabajos de mano de obra</h4><p>Servicios cargados a la orden</p></div><button class="btn btn-blue btn-sm">Agregar trabajo</button></div>
+        <div class="table-responsive"><table class="table table-modern"><thead><tr><th>Descripción</th><th>Cant.</th><th>Precio</th><th>Total</th><th>Operario</th><th>Terminado</th></tr></thead><tbody><tr><td class="fw-bold">Escáner automotriz y diagnóstico</td><td>2</td><td>$20.00</td><td>$40.00</td><td>Sin asignar</td><td><span class="badgex b-gray">No</span></td></tr><tr><td class="fw-bold">Mantenimiento completo de frenos</td><td>4</td><td>$40.00</td><td>$160.00</td><td>Juan Suárez</td><td><span class="badgex b-gray">No</span></td></tr></tbody></table></div>
+      </div>
+    </section>
+
+    <section id="pizarra" class="screen">
+      <div class="mobile-quick-title"><div><b>Pizarra</b><br><span>Operación por estados</span></div><i class="bi bi-kanban"></i></div>
+
+      <div class="section-head">
+        <div><h4>Pizarra de operación</h4><p>Tablero visual para controlar el flujo operativo del taller.</p></div>
+        <button class="btn btn-blue"><i class="bi bi-plus-circle me-1"></i> Agregar tarea</button>
+      </div>
+      <div class="kanban">
+        <div class="kanban-col"><h5>Recibido <span class="badgex b-rec">17</span></h5><div class="ticket"><b>OT #1054</b><div class="subtext">CHEVROLET LUV D-MAX</div><hr><div class="subtext">Mecánico: CARLOS MENDOZA</div><div class="bar"><span style="width:20%"></span></div></div><div class="ticket"><b>OT #1056</b><div class="subtext">TOYOTA LAND CRUISER</div><hr><div class="subtext">DIEGO ALEJANDRO VERA</div><div class="bar"><span style="width:12%"></span></div></div></div>
+        <div class="kanban-col"><h5>En proceso <span class="badgex b-pro">3</span></h5><div class="ticket"><b>OT #10</b><div class="subtext">Mazda BT50 · caja de cambios</div><hr><div class="subtext">Operario asignado</div><div class="bar"><span style="width:58%"></span></div></div></div>
+        <div class="kanban-col"><h5>Terminado <span class="badgex b-ok">0</span></h5><div class="text-center text-muted mt-5">Sin órdenes terminadas</div></div>
+        <div class="kanban-col"><h5>Entregado <span class="badgex b-gray">0</span></h5><div class="text-center text-muted mt-5">Sin entregas registradas</div></div>
+      </div>
+    </section>
+
+    <section id="repuestos" class="screen"></section>
+    <section id="mano" class="screen"></section>
+    <section id="bodega" class="screen"></section>
+    <section id="clientes" class="screen"></section>
+    <section id="mecanicos" class="screen"></section>
+
+    <section id="cobrar" class="screen">
+      <div class="mobile-quick-title"><div><b>Cuentas por cobrar</b><br><span>Saldos y abonos</span></div><i class="bi bi-cash-coin"></i></div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-md-3"><div class="cardx stat"><div class="iconbox bg-primary-subtle text-primary"><i class="bi bi-file-earmark-text"></i></div><div><small>Órdenes</small><h4>13</h4></div></div></div>
+        <div class="col-md-3"><div class="cardx stat"><div class="iconbox bg-warning-subtle text-warning"><i class="bi bi-wallet2"></i></div><div><small>Valor total</small><h4>$2.368</h4></div></div></div>
+        <div class="col-md-3"><div class="cardx stat"><div class="iconbox bg-success-subtle text-success"><i class="bi bi-check-circle"></i></div><div><small>Abonado</small><h4>$293</h4></div></div></div>
+        <div class="col-md-3"><div class="cardx stat"><div class="iconbox bg-danger-subtle text-danger"><i class="bi bi-exclamation-circle"></i></div><div><small>Saldo</small><h4>$2.084</h4></div></div></div>
+      </div>
+      <div class="cardx p-4">
+        <div class="section-head"><div><h4>Cuentas por cobrar</h4><p>Control de saldos pendientes y abonos parciales.</p></div></div>
+        <div class="table-responsive"><table class="table table-modern"><thead><tr><th>OT</th><th>Cliente</th><th>Mecánico</th><th>Estado</th><th>Total</th><th>Abonado</th><th>Saldo</th></tr></thead><tbody><tr><td class="order-id">#1054</td><td>DIEGO ALEJANDRO VERA</td><td>CARLOS MENDOZA</td><td><span class="badgex b-danger">Pendiente</span></td><td>$684.50</td><td>$0.00</td><td class="text-danger fw-bold">$684.50</td></tr><tr><td class="order-id">#1051</td><td>JORGE RAMÍREZ</td><td>JORGE RAMÍREZ</td><td><span class="badgex b-pro">Parcial</span></td><td>$218.90</td><td>$100.00</td><td class="text-danger fw-bold">$118.90</td></tr></tbody></table></div>
+      </div>
+    </section>
+
+  </main>
+</section>
+</div>
+
+<nav class="mobile-bottom-nav" id="mobileBottomNav">
+  <button class="active" onclick="showScreen('dashboard'); setBottomActive(0)"><i class="bi bi-house-door"></i>Inicio</button>
+  <button onclick="showScreen('ordenes'); setBottomActive(1)"><i class="bi bi-clipboard2-check"></i>Órdenes</button>
+  <button onclick="showScreen('crear'); setBottomActive(2)"><i class="bi bi-plus-circle"></i>Nueva</button>
+  <button onclick="showScreen('pizarra'); setBottomActive(3)"><i class="bi bi-kanban"></i>Pizarra</button>
+</nav>
+
+
+<script>
+const titles={
+ dashboard:['Dashboard','Control operativo, financiero y técnico del taller automotriz'],
+ presentacion:['Presentación comercial','Vista para mostrar el software a clientes o inversionistas'],
+ ordenes:['Órdenes de trabajo','Consulta y control de trabajos activos'],
+ crear:['Nueva orden','Registro inicial de cliente, vehículo, diagnóstico, servicio y técnico responsable'],
+ detalle:['Detalle de orden','Vista técnica, financiera y operativa de una orden'],
+ pizarra:['Pizarra de operación','Seguimiento visual del flujo de trabajo'],
+ repuestos:['Repuestos','Control de artículos, stock y precios'],
+ mano:['Mano de obra','Catálogo de trabajos y costos técnicos'],
+ bodega:['Bodega / Kardex','Movimientos de ingreso y egreso'],
+ clientes:['Clientes','Base de datos de clientes'],
+ mecanicos:['Mecánicos','Registro de responsables y contactos'],
+ cobrar:['Cuentas por cobrar','Saldos, abonos y pendientes']
+};
+function showScreen(id,el){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-itemx').forEach(n=>n.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.getElementById('pageTitle').textContent=titles[id]?.[0]||'TallerPro CRM';
+  document.getElementById('pageSubtitle').textContent=titles[id]?.[1]||'Sistema para talleres automotrices';
+  toggleMenu(false);
+  syncBottom(id);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function toggleMenu(open){
+  const sidebar=document.getElementById('sidebar');
+  const backdrop=document.getElementById('mobileBackdrop');
+  if(!sidebar || !backdrop) return;
+  sidebar.classList.toggle('open', open);
+  backdrop.classList.toggle('show', open);
+  document.body.classList.toggle('menu-open', open);
+}
+function setBottomActive(index){
+  document.querySelectorAll('#mobileBottomNav button').forEach((b,i)=>b.classList.toggle('active',i===index));
+}
+function syncBottom(id){
+  const map={dashboard:0,ordenes:1,crear:2,pizarra:3};
+  if(map[id]!==undefined) setBottomActive(map[id]);
+}
+
+const orders=[
+ {n:23,fecha:'04/06/2026',cliente:'DIEGO ALEJANDRO VERA',vehículo:'Toyota Land Cruiser · reparación de motor',mecanico:'DIEGO ALEJANDRO VERA',estado:'RECIBIDO',cuenta:'PENDIENTE',total:'$185.40',img:'NO'},
+ {n:22,fecha:'04/06/2026',cliente:'DIEGO ALEJANDRO VERA',vehículo:'Chevrolet Grand Vitara · embrague',mecanico:'LUIS HERRERA',estado:'RECIBIDO',cuenta:'SIN VALOR',total:'$0.00',img:'NO'},
+ {n:21,fecha:'03/06/2026',cliente:'DIEGO ALEJANDRO VERA',vehículo:'Chevrolet D-Max · mantenimiento general',mecanico:'CARLOS MENDOZA',estado:'RECIBIDO',cuenta:'PENDIENTE',total:'$684.50',img:'SI'},
+ {n:20,fecha:'03/06/2026',cliente:'DIEGO ALEJANDRO VERA',vehículo:'Hyundai Tucson · escáner y bujías',mecanico:'FERNANDO MORALES',estado:'RECIBIDO',cuenta:'PENDIENTE',total:'$392.75',img:'SI'},
+ {n:18,fecha:'03/06/2026',cliente:'JORGE RAMÍREZ',vehículo:'Ford F250 · frenos y dirección',mecanico:'JORGE RAMÍREZ',estado:'RECIBIDO',cuenta:'ABONADO',total:'$218.90',img:'SI'}
+];
+function cuentaBadge(c){return c==='ABONADO'?'<span class="badgex b-pro">Abonado</span>':c==='SIN VALOR'?'<span class="badgex b-gray">Sin valor</span>':'<span class="badgex b-danger">Pendiente</span>'}
+function rowDash(o){return `<tr><td class="order-id">#${o.n}</td><td><div class="vehículo">${o.vehículo}</div><div class="subtext">${o.cliente}</div></td><td>${o.mecanico}</td><td><span class="badgex b-rec">${o.estado}</span></td><td>${cuentaBadge(o.cuenta)}</td><td class="text-end fw-bold">${o.total}</td></tr>`}
+function rowList(o){return `<tr><td class="order-id">#${o.n}</td><td>${o.fecha}</td><td>${o.cliente}</td><td><div class="vehículo">${o.vehículo}</div></td><td>${o.mecanico}</td><td>${o.img==='SI'?'<span class="badgex b-ok">Sí</span>':'<span class="badgex b-gray">No</span>'}</td><td><span class="badgex b-rec">${o.estado}</span></td><td>${cuentaBadge(o.cuenta)}</td><td class="text-end fw-bold">${o.total}</td><td><button class="btn btn-soft btn-sm" onclick="showScreen('detalle')"><i class="bi bi-eye"></i></button></td></tr>`}
+document.getElementById('ordersDashboard').innerHTML=orders.map(rowDash).join('');
+document.getElementById('ordersList').innerHTML=orders.map(rowList).join('');
+
+function simpleModule(id,title,subtitle,headers,rows,button){
+  document.getElementById(id).innerHTML=`<div class="mobile-quick-title"><div><b>${title}</b><br><span>${subtitle}</span></div><i class="bi bi-grid-3x3-gap"></i></div><div class="cardx p-4"><div class="section-head"><div><h4>${title}</h4><p>${subtitle}</p></div><button class="btn btn-blue">${button}</button></div><div class="searchbar mb-3"><input class="form-control" placeholder="Buscar registro..."></div><div class="table-responsive"><table class="table table-modern"><thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}<th></th></tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}<td><button class="btn btn-soft btn-sm"><i class="bi bi-pencil"></i></button></td></tr>`).join('')}</tbody></table></div></div>`;
+}
+simpleModule('repuestos','Repuestos y artículos','Catálogo de productos, stock y precios de venta.',['Código','Descripción','Categoría','Stock','P. venta'],[
+ ['021','Filtro de aceite','Repuestos','<span class="text-danger fw-bold">0.00</span>','$0.00'],
+ ['020','Pastillas de freno','Repuestos','<span class="text-danger fw-bold">0.00</span>','$0.00'],
+ ['015','Bujías de encendido','Repuestos','<span class="text-success fw-bold">8.00</span>','$12.50']
+],'Nuevo artículo');
+simpleModule('mano','Mano de obra','Servicios técnicos configurables para cada orden.',['ID','Descripción','Departamento','Operario','Valor base'],[
+ ['14','Alineación y balanceo','Suspensión / dirección','Pedro Navarro','$35.00'],
+ ['27','Cambio de bujías','Mantenimiento','Wilmer Castro','$20.00'],
+ ['31','Escáner automotriz y diagnóstico','Diagnóstico','Sin asignar','$20.00']
+],'Nueva mano de obra');
+simpleModule('clientes','Clientes','Base comercial y técnica de clientes.',['Nombre','RUC/Cédula','Teléfono','Email','Estado'],[
+ ['JUAN CARLOS PAREDES','0912345678','0981234567','cliente01@rectipro.demo','<span class="badgex b-ok">Activo</span>'],
+ ['MARCO ANTONIO SUÁREZ','0923456789','0992345678','cliente02@rectipro.demo','<span class="badgex b-ok">Activo</span>'],
+ ['LUIS FERNANDO ZAMBRANO','0934567890','0973456789','cliente03@rectipro.demo','<span class="badgex b-ok">Activo</span>'],
+ ['DIEGO ALEJANDRO VERA','0945678901','0964567890','cliente04@rectipro.demo','<span class="badgex b-ok">Activo</span>'],
+ ['GABRIEL EDUARDO MORENO','0956789012','0955678901','cliente05@rectipro.demo','<span class="badgex b-ok">Activo</span>'],
+ ['RICARDO JAVIER BENÍTEZ','0967890123','0946789012','cliente06@rectipro.demo','<span class="badgex b-ok">Activo</span>']
+],'Nuevo cliente');
+simpleModule('mecanicos','Mecánicos','Responsables, contactos y ubicación.',['Nombre','Teléfono','Ciudad','Especialidad','Estado'],[
+ ['CARLOS MENDOZA','0973456789','SECTOR SUR','Mecánica general','<span class="badgex b-ok">Activo</span>'],
+ ['JORGE RAMÍREZ','0964567890','SECTOR OESTE','Vehículo / servicioes diésel','<span class="badgex b-ok">Activo</span>'],
+ ['MIGUEL ANDRADE','0955678901','SECTOR NORTE','Frenos, dirección y suspensión','<span class="badgex b-ok">Activo</span>'],
+ ['FERNANDO MORALES','0946789012','SECTOR ESTE','Embrague y caja de cambios','<span class="badgex b-ok">Activo</span>'],
+ ['ROBERTO SÁNCHEZ','0937890123','SECTOR CENTRO','Diagnóstico con escáner','<span class="badgex b-ok">Activo</span>'],
+ ['LUIS HERRERA','0928901234','SECTOR INDUSTRIAL','Reparación interna de motor','<span class="badgex b-ok">Activo</span>'],
+ ['DIEGO SALAZAR','0919012345','SECTOR COMERCIAL','Mantenimiento preventivo','<span class="badgex b-ok">Activo</span>'],
+ ['ANDRÉS CEVALLOS','0901234567','SECTOR TÉCNICO','Control de calidad y entrega','<span class="badgex b-ok">Activo</span>']
+],'Nuevo mecánico');
+
+document.getElementById('bodega').innerHTML=`
+<div class="cardx p-4">
+  <div class="section-head"><div><h4>Bodega / Kardex</h4><p>Registra ingresos, egresos y movimientos de inventario.</p></div><button class="btn btn-blue">Guardar movimiento</button></div>
+  <div class="row g-3 mb-4">
+    <div class="col-md-3"><select class="form-select"><option>Ingreso</option><option>Egreso</option></select></div>
+    <div class="col-md-3"><input type="date" class="form-control"></div>
+    <div class="col-md-3"><input class="form-control" placeholder="Motivo"></div>
+    <div class="col-md-3"><input class="form-control" placeholder="Documento"></div>
+  </div>
+  <div class="searchbar mb-3"><div class="row g-2"><div class="col-md-6"><input class="form-control" placeholder="Producto"></div><div class="col-md-2"><input class="form-control" value="1"></div><div class="col-md-2"><input class="form-control" value="0.00"></div><div class="col-md-2"><button class="btn btn-blue w-100">Agregar</button></div></div></div>
+  <table class="table table-modern"><thead><tr><th>Producto</th><th>Cantidad</th><th>Precio unitario</th><th>Subtotal</th></tr></thead><tbody><tr><td colspan="4" class="text-center text-muted py-5">Agrega productos para registrar el movimiento</td></tr></tbody></table>
+</div>`;
+
+
+function buildMobileCard(containerSelector, cardsHtml){
+  const container=document.querySelector(containerSelector);
+  if(!container) return;
+  const tableWrap=container.querySelector('.table-responsive');
+  if(tableWrap) tableWrap.classList.add('mobile-hide-table');
+  let existing=container.querySelector('.mobile-card-list');
+  if(existing) existing.remove();
+  const div=document.createElement('div');
+  div.className='mobile-card-list';
+  div.innerHTML=cardsHtml;
+  if(tableWrap) tableWrap.insertAdjacentElement('afterend', div);
+}
+function mobileOrderCards(){
+  const cards = orders.map(o=>`
+    <div class="mobile-data-card">
+      <div class="mobile-data-top">
+        <div><b>OT #${o.n}</b><div class="subtext">${o.fecha}</div></div>
+        <span class="badgex b-rec">${o.estado}</span>
+      </div>
+      <div class="line"><span>Vehículo / servicio</span><span>${o.vehículo}</span></div>
+      <div class="line"><span>Cliente</span><span>${o.cliente}</span></div>
+      <div class="line"><span>Mecánico</span><span>${o.mecanico}</span></div>
+      <div class="line"><span>Cuenta</span><span>${o.cuenta}</span></div>
+      <div class="line"><span>Total</span><span>${o.total}</span></div>
+      <div class="mobile-data-actions">
+        <button class="btn btn-soft" onclick="showScreen('detalle')"><i class="bi bi-eye"></i> Ver</button>
+        <button class="btn btn-blue"><i class="bi bi-pencil"></i> Editar</button>
+      </div>
+    </div>`).join('');
+  buildMobileCard('#ordenes .cardx', cards);
+  buildMobileCard('#dashboard .col-xl-8 .cardx', cards);
+}
+function mobileStaticCards(){
+  buildMobileCard('#detalle .cardx:last-child', `
+    <div class="mobile-data-card">
+      <div class="mobile-data-top"><b>Escáner automotriz y diagnóstico</b><span class="badgex b-gray">No terminado</span></div>
+      <div class="line"><span>Cantidad</span><span>2</span></div>
+      <div class="line"><span>Precio</span><span>$20.00</span></div>
+      <div class="line"><span>Total</span><span>$40.00</span></div>
+      <div class="line"><span>Operario</span><span>Sin asignar</span></div>
+    </div>
+    <div class="mobile-data-card">
+      <div class="mobile-data-top"><b>Mantenimiento completo de frenos</b><span class="badgex b-gray">No terminado</span></div>
+      <div class="line"><span>Cantidad</span><span>4</span></div>
+      <div class="line"><span>Precio</span><span>$40.00</span></div>
+      <div class="line"><span>Total</span><span>$160.00</span></div>
+      <div class="line"><span>Operario</span><span>Juan Suárez</span></div>
+    </div>`);
+  buildMobileCard('#cobrar .cardx.p-4', `
+    <div class="mobile-data-card">
+      <div class="mobile-data-top"><b>OT #1054</b><span class="badgex b-danger">Pendiente</span></div>
+      <div class="line"><span>Cliente</span><span>DIEGO ALEJANDRO VERA</span></div>
+      <div class="line"><span>Mecánico</span><span>CARLOS MENDOZA</span></div>
+      <div class="line"><span>Total</span><span>$684.50</span></div>
+      <div class="line"><span>Saldo</span><span>$684.50</span></div>
+    </div>
+    <div class="mobile-data-card">
+      <div class="mobile-data-top"><b>OT #1051</b><span class="badgex b-pro">Parcial</span></div>
+      <div class="line"><span>Cliente</span><span>JORGE RAMÍREZ</span></div>
+      <div class="line"><span>Mecánico</span><span>JORGE RAMÍREZ</span></div>
+      <div class="line"><span>Total</span><span>$218.90</span></div>
+      <div class="line"><span>Saldo</span><span>$118.90</span></div>
+    </div>`);
+}
+function enhanceDynamicMobileCards(){
+  const data = {
+    repuestos:[
+      ['021','Filtro de aceite','Repuestos','0.00','$0.00'],
+      ['020','Pastillas de freno','Repuestos','0.00','$0.00'],
+      ['015','Bujías de encendido','Repuestos','8.00','$12.50']
+    ],
+    mano:[
+      ['14','Alineación y balanceo','Suspensión / dirección','Pedro Navarro','$35.00'],
+      ['27','Cambio de bujías','Mantenimiento','Wilmer Castro','$20.00'],
+      ['31','Escáner automotriz y diagnóstico','Diagnóstico','Sin asignar','$20.00']
+    ],
+    clientes:[
+      ['JUAN CARLOS PAREDES','0912345678','0981234567','cliente01@rectipro.demo','Activo'],
+      ['MARCO ANTONIO SUÁREZ','0923456789','0992345678','cliente02@rectipro.demo','Activo'],
+      ['LUIS FERNANDO ZAMBRANO','0934567890','0973456789','cliente03@rectipro.demo','Activo'],
+      ['DIEGO ALEJANDRO VERA','0945678901','0964567890','cliente04@rectipro.demo','Activo'],
+      ['GABRIEL EDUARDO MORENO','0956789012','0955678901','cliente05@rectipro.demo','Activo'],
+      ['RICARDO JAVIER BENÍTEZ','0967890123','0946789012','cliente06@rectipro.demo','Activo']
+    ],
+    mecanicos:[
+      ['CARLOS MENDOZA','0973456789','SECTOR SUR','Mecánica general','Activo'],
+      ['JORGE RAMÍREZ','0964567890','SECTOR OESTE','Vehículo / servicioes diésel','Activo'],
+      ['MIGUEL ANDRADE','0955678901','SECTOR NORTE','Frenos, dirección y suspensión','Activo'],
+      ['FERNANDO MORALES','0946789012','SECTOR ESTE','Embrague y caja de cambios','Activo'],
+      ['ROBERTO SÁNCHEZ','0937890123','SECTOR CENTRO','Diagnóstico con escáner','Activo'],
+      ['LUIS HERRERA','0928901234','SECTOR INDUSTRIAL','Reparación interna de motor','Activo'],
+      ['DIEGO SALAZAR','0919012345','SECTOR COMERCIAL','Mantenimiento preventivo','Activo'],
+      ['ANDRÉS CEVALLOS','0901234567','SECTOR TÉCNICO','Control de calidad y entrega','Activo']
+    ]
+  };
+  const labels={
+    repuestos:['Código','Descripción','Categoría','Stock','P. venta'],
+    mano:['ID','Descripción','Departamento','Operario','Valor base'],
+    clientes:['Nombre','RUC/Cédula','Teléfono','Email','Estado'],
+    mecanicos:['Nombre','Teléfono','Ciudad','Especialidad','Estado']
+  };
+  Object.keys(data).forEach(id=>{
+    const cards=data[id].map(r=>`
+      <div class="mobile-data-card">
+        <div class="mobile-data-top"><b>${r[1]||r[0]}</b><span class="badgex b-gray">${r[0]}</span></div>
+        ${r.map((v,i)=>`<div class="line"><span>${labels[id][i]}</span><span>${String(v).replace(/<[^>]*>/g,'')}</span></div>`).join('')}
+        <div class="mobile-data-actions"><button class="btn btn-soft"><i class="bi bi-pencil"></i> Editar</button><button class="btn btn-blue"><i class="bi bi-eye"></i> Ver</button></div>
+      </div>`).join('');
+    buildMobileCard(`#${id} .cardx`, cards);
+  });
+  buildMobileCard('#bodega .cardx', `
+    <div class="mobile-data-card">
+      <div class="mobile-data-top"><b>Movimiento de bodega</b><span class="badgex b-rec">Ingreso</span></div>
+      <div class="line"><span>Fecha</span><span>Seleccionar fecha</span></div>
+      <div class="line"><span>Motivo</span><span>Compra / ajuste / salida</span></div>
+      <div class="line"><span>Producto</span><span>Agregar desde inventario</span></div>
+      <div class="mobile-data-actions"><button class="btn btn-soft">Limpiar</button><button class="btn btn-blue">Guardar</button></div>
+    </div>`);
+}
+mobileOrderCards();
+mobileStaticCards();
+enhanceDynamicMobileCards();
+
+</script>
+</body>
+</html>
