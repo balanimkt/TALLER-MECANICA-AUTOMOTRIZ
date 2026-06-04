@@ -552,6 +552,24 @@ body{
   .portal-order .number{font-size:30px}
 }
 
+/* ===== Módulo Mano de Obra tipo sistema real ===== */
+.labor-toolbar{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.labor-filters{display:flex;gap:12px;flex-wrap:wrap;align-items:end}
+.labor-filters .form-control{min-width:260px}
+.labor-filters .form-select{min-width:220px}
+.action-mini{border:0;border-radius:9px;width:34px;height:34px;display:inline-grid;place-items:center;font-weight:900;margin-left:5px}
+.action-edit{background:#fbbf24;color:#78350f}.action-price{background:#0f766e;color:white}.action-delete{background:#fff1f2;color:#be123c;border:1px solid #fecdd3}
+.modalx-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.62);z-index:70;display:none;align-items:center;justify-content:center;padding:18px}
+.modalx-backdrop.show{display:flex}
+.modalx{width:min(1180px,96vw);background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 25px 70px rgba(0,0,0,.35)}
+.modalx-head{background:#111827;color:white;padding:22px 26px;display:flex;align-items:center;justify-content:space-between}
+.modalx-head h3{margin:0;font-size:24px;font-weight:900;letter-spacing:.3px}
+.modalx-close{border:0;background:transparent;color:#64748b;font-size:28px}.modalx-close:hover{color:white}
+.modalx-body{padding:26px}
+.modalx-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:22px}
+.modalx-id{background:#e5e7eb!important;font-weight:800;color:#334155}
+@media(max-width:900px){.labor-toolbar{align-items:stretch}.labor-filters,.labor-filters .form-control,.labor-filters .form-select,.labor-toolbar .btn{width:100%;min-width:0}.modalx{width:96vw;max-height:90vh;overflow:auto}.modalx-head h3{font-size:20px}.modalx-body{padding:18px}.modalx-actions{display:grid;grid-template-columns:1fr 1fr}.modalx-actions .btn{width:100%}}
+
 </style>
 </head>
 <body>
@@ -1003,11 +1021,53 @@ simpleModule('repuestos','Repuestos y artículos','Catálogo de productos, stock
  ['020','PASTILLAS DE FRENO','REPUESTOS','<span class="text-danger fw-bold">0.00</span>','$0.00'],
  ['015','BUJÍAS DE ENCENDIDO','REPUESTOS','<span class="text-success fw-bold">8.00</span>','$12.50']
 ],'Nuevo artículo');
-simpleModule('mano','Mano de obra','Servicios técnicos configurables para cada orden.',['ID','Descripción','Departamento','Técnico','Valor base'],[
- ['14','ALINEACIÓN Y BALANCEO','SERVICIOS','Pedro Navarro','$50.00'],
- ['27','CAMBIO DE BUJÍAS','MOTOR','Wilmer Castro','$20.00'],
- ['31','CAMBIO DE DISCOS DE EMBRAGUE','TRANSMISIÓN','Sin asignar','$20.00']
-],'Nueva mano de obra');
+
+const laborDepartments=['MECÁNICA GENERAL','MOTOR','FRENOS','SUSPENSIÓN','DIRECCIÓN','TRANSMISIÓN','EMBRAGUE','DIAGNÓSTICO / ESCÁNER','ELECTRICIDAD','MANTENIMIENTO','VARIOS'];
+const laborOperators=['Sin técnico asignado','Carlos Mendoza','Fernando Morales','Jorge Ramírez','Miguel Andrade','Luis Herrera','Roberto Sánchez','Diego Salazar','Andrés Cevallos','Pedro Navarro','Wilmer Castro'];
+const laborFields=['NINGUNO (cantidad fija)','CILINDROS (NoCilindros)','BUJÍAS (NoBujias)','RUEDAS (NoRuedas)','DISCOS DE FRENO (NoDiscosFreno)','PASTILLAS (NoPastillas)','AMORTIGUADORES (NoAmortiguadores)','INYECTORES (NoInyectores)','VÁLVULAS (NoValvulas)','MARCHAS / CAMBIOS (NoMarchas)','BRAZOS DE SUSPENSIÓN (NoBrazos)','CALIBRACIÓN (NoCalibracion)'];
+let laborRows=[
+ {id:1128,desc:'CAMBIO DE ACEITE Y FILTRO',dept:'MANTENIMIENTO',op:'Carlos Mendoza',field:'NINGUNO',qty:'1.00',price:'$25.00'},
+ {id:45,desc:'CAMBIO DE BUJÍAS',dept:'MOTOR',op:'Fernando Morales',field:'BUJÍAS',qty:'4.00',price:'$20.00'},
+ {id:62,desc:'MANTENIMIENTO DE FRENOS DELANTEROS',dept:'FRENOS',op:'Miguel Andrade',field:'RUEDAS',qty:'2.00',price:'$35.00'},
+ {id:1126,desc:'CAMBIO DE DISCOS DE EMBRAGUE',dept:'EMBRAGUE',op:'Luis Herrera',field:'NINGUNO',qty:'1.00',price:'$85.00'},
+ {id:14,desc:'ALINEACIÓN Y BALANCEO',dept:'DIRECCIÓN',op:'Pedro Navarro',field:'RUEDAS',qty:'4.00',price:'$50.00'},
+ {id:28,desc:'ESCÁNER Y DIAGNÓSTICO AUTOMOTRIZ',dept:'DIAGNÓSTICO / ESCÁNER',op:'Wilmer Castro',field:'NINGUNO',qty:'1.00',price:'$30.00'},
+ {id:27,desc:'REPARACIÓN INTERIOR DEL MOTOR',dept:'MOTOR',op:'Roberto Sánchez',field:'CILINDROS',qty:'4.00',price:'$180.00'},
+ {id:96,desc:'MANTENIMIENTO DE CAJA DE CAMBIOS',dept:'TRANSMISIÓN',op:'Diego Salazar',field:'MARCHAS / CAMBIOS',qty:'1.00',price:'$120.00'},
+ {id:24,desc:'MANTENIMIENTO DE DIRECCIÓN',dept:'DIRECCIÓN',op:'Andrés Cevallos',field:'NINGUNO',qty:'1.00',price:'$65.00'},
+ {id:107,desc:'CAMBIO DE AMORTIGUADORES',dept:'SUSPENSIÓN',op:'Jorge Ramírez',field:'AMORTIGUADORES',qty:'2.00',price:'$45.00'}
+];
+function optionsFrom(arr,empty){return `<option>${empty}</option>`+arr.map(x=>`<option>${x}</option>`).join('')}
+function renderLaborRows(){
+ const q=(document.getElementById('laborSearch')?.value||'').toLowerCase();
+ const dep=(document.getElementById('laborFilterDept')?.value||'');
+ const filtered=laborRows.filter(r=>(!q||r.desc.toLowerCase().includes(q)||r.dept.toLowerCase().includes(q)||r.op.toLowerCase().includes(q)) && (!dep||dep.includes('Todos')||dep===r.dept));
+ document.getElementById('laborRows').innerHTML=filtered.map(r=>`<tr><td>${r.id}</td><td class="fw-bold">${r.desc}</td><td>${r.dept}</td><td>${r.op}</td><td><span class="badgex b-rec">${r.field}</span></td><td>${r.qty}</td><td>${r.price}</td><td class="text-end"><button class="action-mini action-edit" title="Editar"><i class="bi bi-pencil"></i></button><button class="action-mini action-price" title="Precio"><i class="bi bi-currency-dollar"></i></button><button class="action-mini action-delete" title="Eliminar"><i class="bi bi-trash"></i></button></td></tr>`).join('');
+ const cards=filtered.map(r=>`<div class="mobile-data-card"><div class="mobile-data-top"><b>${r.desc}</b><span class="badgex b-gray">${r.id}</span></div><div class="line"><span>Departamento</span><span>${r.dept}</span></div><div class="line"><span>Técnico</span><span>${r.op}</span></div><div class="line"><span>Campo vehículo</span><span>${r.field}</span></div><div class="line"><span>Cant. fija</span><span>${r.qty}</span></div><div class="line"><span>Precio</span><span>${r.price}</span></div><div class="mobile-data-actions"><button class="btn btn-soft"><i class="bi bi-pencil"></i> Editar</button><button class="btn btn-blue"><i class="bi bi-currency-dollar"></i> Precio</button></div></div>`).join('');
+ buildMobileCard('#mano .cardx',cards);
+}
+function openLaborModal(){document.getElementById('laborModal').classList.add('show')}
+function closeLaborModal(){document.getElementById('laborModal').classList.remove('show')}
+function saveLaborDemo(){
+ const desc=document.getElementById('laborDesc').value.trim()||'NUEVO SERVICIO AUTOMOTRIZ';
+ laborRows.unshift({id:Math.max(...laborRows.map(r=>r.id))+1,desc:desc.toUpperCase(),dept:document.getElementById('laborDept').value.replace('— Sin departamento —','VARIOS'),op:document.getElementById('laborOp').value.replace('— Sin técnico asignado —','Sin técnico asignado'),field:document.getElementById('laborField').value.split(' (')[0],qty:(document.getElementById('laborQty').value||'0')+'.00',price:'—'});
+ closeLaborModal(); renderLaborRows(); alert('Demo visual: la mano de obra se agregó a la tabla.');
+}
+function createLaborModule(){
+ document.getElementById('mano').innerHTML=`
+ <div class="mobile-quick-title"><div><b>Mano de obra</b><br><span>Catálogo de servicios técnicos</span></div><i class="bi bi-tools"></i></div>
+ <div class="cardx p-4">
+  <div class="labor-toolbar">
+   <div><h4 class="mb-1 fw-bold"><i class="bi bi-tools me-2"></i>Mano de obra</h4><p class="text-muted mb-0">Servicios, departamentos, técnicos, cantidad fija y campo del vehículo.</p></div>
+   <div class="d-flex gap-2 flex-wrap"><button class="btn btn-soft" onclick="renderLaborRows()"><i class="bi bi-arrow-clockwise me-1"></i> Actualizar</button><button class="btn btn-blue" onclick="openLaborModal()"><i class="bi bi-plus-circle me-1"></i> Nueva</button></div>
+  </div>
+  <div class="labor-filters mb-3"><div><label class="subtext">Buscar</label><input id="laborSearch" class="form-control" placeholder="Buscar por descripción..." oninput="renderLaborRows()"></div><div><label class="subtext">Departamento</label><select id="laborFilterDept" class="form-select" onchange="renderLaborRows()"><option>— Todos los departamentos —</option>${laborDepartments.map(d=>`<option>${d}</option>`).join('')}</select></div></div>
+  <div class="table-responsive"><table class="table table-modern align-middle"><thead><tr><th>Id</th><th>Descripción</th><th>Departamento</th><th>Técnico</th><th>Campo vehículo</th><th>Cant. fija</th><th>Precio (tipo)</th><th class="text-end">Acciones</th></tr></thead><tbody id="laborRows"></tbody></table></div>
+ </div>
+ <div class="modalx-backdrop" id="laborModal"><div class="modalx"><div class="modalx-head"><h3><i class="bi bi-tools me-2"></i>NUEVA MANO DE OBRA</h3><button class="modalx-close" onclick="closeLaborModal()">×</button></div><div class="modalx-body"><div class="row g-3"><div class="col-md-3"><label class="form-label">Id Mano de Obra</label><input class="form-control modalx-id" value="(nuevo)" disabled></div><div class="col-md-9"><label class="form-label">Descripción *</label><input id="laborDesc" class="form-control" placeholder="Ej.: CAMBIO DE PASTILLAS DE FRENO"></div><div class="col-md-6"><label class="form-label">Departamento</label><select id="laborDept" class="form-select">${optionsFrom(laborDepartments,'— Sin departamento —')}</select></div><div class="col-md-6"><label class="form-label">Técnico</label><select id="laborOp" class="form-select">${optionsFrom(laborOperators,'— Sin técnico asignado —')}</select></div><div class="col-md-6"><label class="form-label">Cantidad fija <i class="bi bi-info-circle"></i></label><input id="laborQty" class="form-control" type="number" value="0" min="0"></div><div class="col-md-6"><label class="form-label">Campo vehículo</label><select id="laborField" class="form-select">${laborFields.map(x=>`<option>${x}</option>`).join('')}</select></div></div><div class="modalx-actions"><button class="btn btn-blue" onclick="saveLaborDemo()"><i class="bi bi-save me-1"></i> Guardar</button><button class="btn btn-soft" onclick="closeLaborModal()"><i class="bi bi-x-circle me-1"></i> Cerrar</button></div></div></div></div>`;
+ renderLaborRows();
+}
+createLaborModule();
 simpleModule('clientes','Clientes','Base comercial y técnica de clientes.',['Nombre','RUC/Cédula','Teléfono','Email','Estado'],[
  ['CRISTIAN ALEJANDRO MORALES','0912345678','0981234567','cliente01@rectipro.demo','<span class="badgex b-ok">Activo</span>'],
  ['EDUARDO JAVIER CASTILLO','0923456789','0992345678','cliente02@rectipro.demo','<span class="badgex b-ok">Activo</span>'],
@@ -1202,11 +1262,6 @@ function enhanceDynamicMobileCards(){
       ['020','PASTILLAS DE FRENO','REPUESTOS','0.00','$0.00'],
       ['015','BUJÍAS DE ENCENDIDO','REPUESTOS','8.00','$12.50']
     ],
-    mano:[
-      ['14','ALINEACIÓN Y BALANCEO','SERVICIOS','Pedro Navarro','$50.00'],
-      ['27','CAMBIO DE BUJÍAS','MOTOR','Wilmer Castro','$20.00'],
-      ['31','CAMBIO DE DISCOS DE EMBRAGUE','TRANSMISIÓN','Sin asignar','$20.00']
-    ],
     clientes:[
       ['CRISTIAN ALEJANDRO MORALES','0912345678','0981234567','cliente01@rectipro.demo','Activo'],
       ['EDUARDO JAVIER CASTILLO','0923456789','0992345678','cliente02@rectipro.demo','Activo'],
@@ -1228,7 +1283,6 @@ function enhanceDynamicMobileCards(){
   };
   const labels={
     repuestos:['Código','Descripción','Categoría','Stock','P. venta'],
-    mano:['ID','Descripción','Departamento','Técnico','Valor base'],
     clientes:['Nombre','RUC/Cédula','Teléfono','Email','Estado'],
     mecanicos:['Nombre','Teléfono','Ciudad','Especialidad','Estado']
   };
