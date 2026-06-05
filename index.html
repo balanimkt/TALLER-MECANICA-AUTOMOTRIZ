@@ -658,6 +658,18 @@ body{
 @media(max-width:520px){.marcas-stats{grid-template-columns:1fr 1fr}.marcas-actions{grid-template-columns:1fr}.marca-card-actions{grid-template-columns:1fr}.marca-stat b{font-size:20px}}
 </style>
 
+
+<script>
+/* ===== CONEXIÓN APPS SCRIPT - TALLERPRO ERP ===== */
+const API_URL = "https://script.google.com/macros/s/AKfycbwtSe-d3wqluH1DXgEpQPDr5riqrDes66HhLfT0LGXYS1aex5X3WbB_tdKtg7nRSIM-/exec";
+async function apiTallerPro(accion, datos = {}) {
+  const res = await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({ accion, ...datos })
+  });
+  return await res.json();
+}
+</script>
 </head>
 <body>
 <div class="mobile-backdrop" id="mobileBackdrop" onclick="toggleMenu(false)"></div>
@@ -2575,13 +2587,7 @@ setTimeout(tpPizarraRender,80);
 /* ===== CLIENTES PRO TALLER AUTOMOTRIZ ===== */
 let tpClientesEstado='';
 let tpClientesEditId=null;
-const tpClientes=[
- {id:1,nombre:'MIGUEL ÁNGEL ZAMBRANO',tipo:'PERSONA NATURAL',ruc:'0945678901',telefono:'0964567890',email:'miguel.zambrano@demo.com',direccion:'Guayaquil - Norte',vehiculos:['GSK-4821 · Chevrolet D-Max 2021','GYE-7710 · Hyundai Tucson 2020'],ultima:'OT #1054 · 03/06/2026',total:684.50,estado:'Activo',ordenes:4},
- {id:2,nombre:'CRISTIAN ALEJANDRO MORALES',tipo:'PERSONA NATURAL',ruc:'0912345678',telefono:'0981234567',email:'cliente01@tallerpro.demo',direccion:'Guayaquil - Sur',vehiculos:['GPO-2198 · Toyota Hilux 2022'],ultima:'OT #1056 · 04/06/2026',total:487.60,estado:'Activo',ordenes:2},
- {id:3,nombre:'EDUARDO JAVIER CASTILLO',tipo:'EMPRESA',ruc:'0991234567001',telefono:'0992345678',email:'contacto@castillofleet.demo',direccion:'Durán',vehiculos:['GYE-1182 · Kia Sportage 2019','PBO-4421 · Nissan Frontier 2018','GUA-8801 · Chevrolet Sail 2020'],ultima:'OT #1055 · 04/06/2026',total:1329.40,estado:'Corporativo',ordenes:7},
- {id:4,nombre:'GABRIEL EDUARDO MORENO',tipo:'PERSONA NATURAL',ruc:'0956789012',telefono:'0955678901',email:'cliente05@tallerpro.demo',direccion:'Samborondón',vehiculos:['GTR-6002 · Mazda BT-50 2017'],ultima:'OT #1049 · 31/05/2026',total:220.00,estado:'Activo',ordenes:1},
- {id:5,nombre:'RICARDO JAVIER BENÍTEZ',tipo:'PERSONA NATURAL',ruc:'0967890123',telefono:'0946789012',email:'cliente06@tallerpro.demo',direccion:'Via a la Costa',vehiculos:['GSD-3900 · Ford F-150 2016'],ultima:'Sin órdenes recientes',total:0,estado:'Prospecto',ordenes:0}
-];
+let tpClientes=[];
 function tpClientesRoot(){
   let root=document.getElementById('clientesProRoot');
   if(!root){
@@ -2594,20 +2600,47 @@ function tpClientesRoot(){
   return root;
 }
 function tpClienteBadge(e){return e==='Corporativo'?'<span class="badgex b-pro">Corporativo</span>':e==='Prospecto'?'<span class="badgex b-gray">Prospecto</span>':'<span class="badgex b-ok">Activo</span>'}
+function normalizarClienteSheet(c){
+ return {
+   id:String(c.id||''),
+   nombre:c.nombre||'',
+   tipo:c.tipo||'PERSONA NATURAL',
+   ruc:c.cedula||c.ruc||'',
+   telefono:c.telefono||'',
+   email:c.email||'',
+   direccion:c.direccion||'',
+   ciudad:c.ciudad||'',
+   notas:c.notas||'',
+   vehiculos:['Vehículo pendiente por registrar'],
+   ultima:'Sin órdenes recientes',
+   total:0,
+   estado:c.estado||'Activo',
+   ordenes:0
+ };
+}
+function tpClienteBadge(e){return e==='Corporativo'?'<span class="badgex b-pro">Corporativo</span>':e==='Prospecto'?'<span class="badgex b-gray">Prospecto</span>':e==='Inactivo'?'<span class="badgex b-danger">Inactivo</span>':'<span class="badgex b-ok">Activo</span>'}
+async function cargarClientesDesdeSheets(){
+ try{
+   const r=await apiTallerPro('listarClientes');
+   if(r && r.ok){ tpClientes=(r.clientes||[]).map(normalizarClienteSheet); return true; }
+   alert('No se pudo listar clientes: '+(r?.mensaje||'Respuesta inválida')); return false;
+ }catch(err){ alert('Error de conexión con Apps Script al listar clientes: '+err.message); return false; }
+}
 function tpClientesFiltrados(){
  const q=(document.getElementById('clienteBuscar')?.value||'').toLowerCase().trim();
  return tpClientes.filter(c=>{
    const okEstado=!tpClientesEstado||c.estado===tpClientesEstado;
-   const txt=[c.nombre,c.ruc,c.telefono,c.email,c.direccion,c.estado,c.tipo,...c.vehiculos].join(' ').toLowerCase();
+   const txt=[c.nombre,c.ruc,c.telefono,c.email,c.direccion,c.estado,c.tipo,...(c.vehiculos||[])].join(' ').toLowerCase();
    return okEstado && (!q||txt.includes(q));
  });
 }
-function renderClientesPro(){
+async function renderClientesPro(){
  const root=tpClientesRoot(); if(!root) return;
- const total=tpClientes.length, activos=tpClientes.filter(c=>c.estado==='Activo').length, vehs=tpClientes.reduce((a,c)=>a+c.vehiculos.length,0), ordenes=tpClientes.reduce((a,c)=>a+c.ordenes,0);
+ await cargarClientesDesdeSheets();
+ const total=tpClientes.length, activos=tpClientes.filter(c=>c.estado==='Activo').length, vehs=tpClientes.reduce((a,c)=>a+(c.vehiculos||[]).length,0), ordenes=tpClientes.reduce((a,c)=>a+(Number(c.ordenes)||0),0);
  root.innerHTML=`
  <div class="clientes-head">
-   <div><h4><i class="bi bi-people me-2"></i>Clientes</h4><p>Base comercial del taller, vehículos asociados, historial y contacto rápido por WhatsApp.</p></div>
+   <div><h4><i class="bi bi-people me-2"></i>Clientes</h4><p>Base comercial conectada a Google Sheets, pestaña clientes.</p></div>
    <div class="clientes-actions">
      <button class="btn btn-success btn-sm" onclick="tpClientesCSV()"><i class="bi bi-file-earmark-spreadsheet me-1"></i> CSV</button>
      <button class="btn btn-blue" onclick="tpClienteAbrirModal()"><i class="bi bi-person-plus me-1"></i> Nuevo cliente</button>
@@ -2621,13 +2654,13 @@ function renderClientesPro(){
  </div>
  <div class="clientes-filter">
    <div class="row g-2 align-items-end">
-     <div class="col-lg-5"><label class="subtext fw-bold">Buscar</label><input id="clienteBuscar" class="form-control" placeholder="Nombre, RUC, teléfono, placa, vehículo o email" oninput="tpClientesRenderList()"></div>
-     <div class="col-lg-3"><label class="subtext fw-bold">Estado</label><select id="clienteEstadoFiltro" class="form-select" onchange="tpClientesEstado=this.value;tpClientesRenderList()"><option value="">Todos</option><option>Activo</option><option>Corporativo</option><option>Prospecto</option></select></div>
+     <div class="col-lg-5"><label class="subtext fw-bold">Buscar</label><input id="clienteBuscar" class="form-control" placeholder="Nombre, cédula, teléfono o email" oninput="tpClientesRenderList()"></div>
+     <div class="col-lg-3"><label class="subtext fw-bold">Estado</label><select id="clienteEstadoFiltro" class="form-select" onchange="tpClientesEstado=this.value;tpClientesRenderList()"><option value="">Todos</option><option>Activo</option><option>Inactivo</option><option>Corporativo</option><option>Prospecto</option></select></div>
      <div class="col-lg-4 d-flex gap-2"><button class="btn btn-blue flex-fill" onclick="tpClientesRenderList()"><i class="bi bi-search me-1"></i> Buscar</button><button class="btn btn-soft" onclick="tpClientesLimpiar()"><i class="bi bi-x-circle me-1"></i> Limpiar</button></div>
    </div>
  </div>
  <div class="cardx p-3">
-   <div class="table-responsive clientes-table-wrap"><table class="table table-modern align-middle clientes-table"><thead><tr><th>Cliente</th><th>RUC/Cédula</th><th>Teléfono</th><th>Email</th><th>Vehículos</th><th>Última orden</th><th class="text-end">Total gastado</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="clientesTbody"></tbody></table></div>
+   <div class="table-responsive clientes-table-wrap"><table class="table table-modern align-middle clientes-table"><thead><tr><th>Cliente</th><th>RUC/Cédula</th><th>Teléfono</th><th>Email</th><th>Dirección</th><th>Ciudad</th><th>Notas</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="clientesTbody"></tbody></table></div>
    <div id="clientesMobile" class="clientes-mobile"></div>
  </div>
  <div class="cliente-modal-backdrop" id="clienteModalBackdrop">
@@ -2642,37 +2675,52 @@ function renderClientesPro(){
      <div class="col-md-4"><label class="form-label small fw-bold">Teléfono / WhatsApp</label><input id="clienteTelefono" class="form-control"></div>
      <div class="col-md-4"><label class="form-label small fw-bold">Email</label><input id="clienteEmail" class="form-control"></div>
      <div class="col-md-8"><label class="form-label small fw-bold">Dirección</label><input id="clienteDireccion" class="form-control"></div>
-     <div class="col-md-4"><label class="form-label small fw-bold">Estado</label><select id="clienteEstado" class="form-select"><option>Activo</option><option>Corporativo</option><option>Prospecto</option></select></div>
-     <div class="col-12"><label class="form-label small fw-bold">Vehículos asociados</label><textarea id="clienteVehiculos" class="form-control" rows="3" placeholder="Una línea por vehículo: PLACA · MARCA MODELO AÑO"></textarea><small class="text-muted">Ejemplo: GSK-4821 · Chevrolet D-Max 2021</small></div>
+     <div class="col-md-4"><label class="form-label small fw-bold">Ciudad</label><input id="clienteCiudad" class="form-control" value="Guayaquil"></div>
+     <div class="col-md-4"><label class="form-label small fw-bold">Estado</label><select id="clienteEstado" class="form-select"><option>Activo</option><option>Inactivo</option><option>Corporativo</option><option>Prospecto</option></select></div>
+     <div class="col-md-8"><label class="form-label small fw-bold">Notas</label><input id="clienteNotas" class="form-control" placeholder="Observaciones del cliente"></div>
     </div>
    </div>
-   <div class="cliente-modal-foot"><button class="btn btn-outline-danger me-auto" id="clienteEliminarBtn" style="display:none" onclick="tpClienteEliminar()"><i class="bi bi-trash me-1"></i>Eliminar</button><button class="btn btn-soft" onclick="tpClienteCerrarModal()">Cancelar</button><button class="btn btn-blue" onclick="tpClienteGuardar()"><i class="bi bi-save me-1"></i>Guardar</button></div>
+   <div class="cliente-modal-foot"><button class="btn btn-outline-danger me-auto" id="clienteEliminarBtn" style="display:none" onclick="tpClienteEliminar()"><i class="bi bi-trash me-1"></i>Marcar inactivo</button><button class="btn btn-soft" onclick="tpClienteCerrarModal()">Cancelar</button><button class="btn btn-blue" onclick="tpClienteGuardar()"><i class="bi bi-save me-1"></i>Guardar</button></div>
   </div>
  </div>`;
  tpClientesRenderList();
 }
 function tpClientesRenderList(){
  const rows=tpClientesFiltrados(); const tbody=document.getElementById('clientesTbody'); const mob=document.getElementById('clientesMobile'); if(!tbody||!mob)return;
- tbody.innerHTML=rows.map(c=>`<tr><td class="cliente-name"><b>${c.nombre}</b><small>${c.tipo} · ${c.direccion}</small></td><td>${c.ruc||''}</td><td><b>${c.telefono||''}</b></td><td class="text-muted small">${c.email||''}</td><td>${c.vehiculos.map(v=>`<span class="cliente-vehicle-chip"><i class="bi bi-car-front"></i>${v}</span>`).join('')}</td><td>${c.ultima}</td><td class="text-end fw-bold">$${c.total.toFixed(2)}</td><td>${tpClienteBadge(c.estado)}</td><td><div class="cliente-actions"><button class="btn btn-sm btn-outline-primary" title="Editar" onclick="tpClienteAbrirModal(${c.id})"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-outline-success" title="WhatsApp" onclick="tpClienteWhatsApp(${c.id})"><i class="bi bi-whatsapp"></i></button><button class="btn btn-sm btn-outline-info" title="Historial" onclick="tpClienteHistorial(${c.id})"><i class="bi bi-clock-history"></i></button><button class="btn btn-sm btn-blue" title="Crear OT" onclick="tpClienteNuevaOrden(${c.id})"><i class="bi bi-plus-circle"></i></button></div></td></tr>`).join('')||'<tr><td colspan="9" class="text-center text-muted py-4">Sin resultados</td></tr>';
- mob.innerHTML=rows.map(c=>`<div class="cliente-card"><div class="cliente-card-top"><div><b>${c.nombre}</b><div class="subtext">${c.tipo}</div></div>${tpClienteBadge(c.estado)}</div><div class="cliente-line"><span>RUC/Cédula</span><span>${c.ruc||''}</span></div><div class="cliente-line"><span>Teléfono</span><span>${c.telefono||''}</span></div><div class="cliente-line"><span>Email</span><span>${c.email||''}</span></div><div class="cliente-line"><span>Vehículos</span><span>${c.vehiculos.length}</span></div><div class="cliente-line"><span>Última OT</span><span>${c.ultima}</span></div><div class="cliente-line"><span>Total</span><span>$${c.total.toFixed(2)}</span></div><div class="cliente-card-actions"><button class="btn btn-outline-success" onclick="tpClienteWhatsApp(${c.id})"><i class="bi bi-whatsapp"></i> WhatsApp</button><button class="btn btn-outline-primary" onclick="tpClienteAbrirModal(${c.id})"><i class="bi bi-pencil"></i> Editar</button><button class="btn btn-outline-info" onclick="tpClienteHistorial(${c.id})"><i class="bi bi-clock-history"></i> Historial</button><button class="btn btn-blue" onclick="tpClienteNuevaOrden(${c.id})"><i class="bi bi-plus-circle"></i> Nueva OT</button></div></div>`).join('')||'<div class="cliente-card text-center text-muted">Sin resultados</div>';
+ tbody.innerHTML=rows.map(c=>`<tr><td class="cliente-name"><b>${c.nombre}</b><small>${c.tipo} · ${c.id}</small></td><td>${c.ruc||''}</td><td><b>${c.telefono||''}</b></td><td class="text-muted small">${c.email||''}</td><td>${c.direccion||''}</td><td>${c.ciudad||''}</td><td>${c.notas||''}</td><td>${tpClienteBadge(c.estado)}</td><td><div class="cliente-actions"><button class="btn btn-sm btn-outline-primary" title="Editar" onclick="tpClienteAbrirModal('${c.id}')"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-outline-success" title="WhatsApp" onclick="tpClienteWhatsApp('${c.id}')"><i class="bi bi-whatsapp"></i></button><button class="btn btn-sm btn-outline-danger" title="Inactivar" onclick="tpClienteEliminar('${c.id}')"><i class="bi bi-trash"></i></button></div></td></tr>`).join('')||'<tr><td colspan="9" class="text-center text-muted py-4">Sin resultados</td></tr>';
+ mob.innerHTML=rows.map(c=>`<div class="cliente-card"><div class="cliente-card-top"><div><b>${c.nombre}</b><div class="subtext">${c.tipo} · ${c.id}</div></div>${tpClienteBadge(c.estado)}</div><div class="cliente-line"><span>RUC/Cédula</span><span>${c.ruc||''}</span></div><div class="cliente-line"><span>Teléfono</span><span>${c.telefono||''}</span></div><div class="cliente-line"><span>Email</span><span>${c.email||''}</span></div><div class="cliente-line"><span>Dirección</span><span>${c.direccion||''}</span></div><div class="cliente-line"><span>Ciudad</span><span>${c.ciudad||''}</span></div><div class="cliente-card-actions"><button class="btn btn-outline-success" onclick="tpClienteWhatsApp('${c.id}')"><i class="bi bi-whatsapp"></i> WhatsApp</button><button class="btn btn-outline-primary" onclick="tpClienteAbrirModal('${c.id}')"><i class="bi bi-pencil"></i> Editar</button></div></div>`).join('')||'<div class="cliente-card text-center text-muted">Sin resultados</div>';
 }
 function tpClientesLimpiar(){document.getElementById('clienteBuscar').value='';document.getElementById('clienteEstadoFiltro').value='';tpClientesEstado='';tpClientesRenderList()}
 function tpClienteAbrirModal(id){
- const c=id?tpClientes.find(x=>x.id===id):null; tpClientesEditId=id||null;
+ const c=id?tpClientes.find(x=>String(x.id)===String(id)):null; tpClientesEditId=id||null;
  document.getElementById('clienteModalTitle').innerHTML=c?'<i class="bi bi-pencil-square me-2"></i>Editar cliente':'<i class="bi bi-person-plus me-2"></i>Nuevo cliente';
- document.getElementById('clienteIdDemo').value=c?.id||''; document.getElementById('clienteNombre').value=c?.nombre||''; document.getElementById('clienteTipo').value=c?.tipo||'PERSONA NATURAL'; document.getElementById('clienteRuc').value=c?.ruc||''; document.getElementById('clienteTelefono').value=c?.telefono||''; document.getElementById('clienteEmail').value=c?.email||''; document.getElementById('clienteDireccion').value=c?.direccion||''; document.getElementById('clienteEstado').value=c?.estado||'Activo'; document.getElementById('clienteVehiculos').value=c?c.vehiculos.join('\n'):''; document.getElementById('clienteEliminarBtn').style.display=c?'inline-flex':'none'; document.getElementById('clienteModalBackdrop').classList.add('show'); setTimeout(()=>document.getElementById('clienteNombre').focus(),80);
+ document.getElementById('clienteIdDemo').value=c?.id||''; document.getElementById('clienteNombre').value=c?.nombre||''; document.getElementById('clienteTipo').value=c?.tipo||'PERSONA NATURAL'; document.getElementById('clienteRuc').value=c?.ruc||''; document.getElementById('clienteTelefono').value=c?.telefono||''; document.getElementById('clienteEmail').value=c?.email||''; document.getElementById('clienteDireccion').value=c?.direccion||''; document.getElementById('clienteCiudad').value=c?.ciudad||'Guayaquil'; document.getElementById('clienteEstado').value=c?.estado||'Activo'; document.getElementById('clienteNotas').value=c?.notas||''; document.getElementById('clienteEliminarBtn').style.display=c?'inline-flex':'none'; document.getElementById('clienteModalBackdrop').classList.add('show'); setTimeout(()=>document.getElementById('clienteNombre').focus(),80);
 }
 function tpClienteCerrarModal(){document.getElementById('clienteModalBackdrop')?.classList.remove('show')}
-function tpClienteGuardar(){
+async function tpClienteGuardar(){
  const nombre=document.getElementById('clienteNombre').value.trim(); if(!nombre){alert('Ingresa el nombre del cliente');return}
- const veh=(document.getElementById('clienteVehiculos').value||'').split('\n').map(x=>x.trim()).filter(Boolean); const obj={id:tpClientesEditId||Date.now(),nombre,tipo:document.getElementById('clienteTipo').value,ruc:document.getElementById('clienteRuc').value,telefono:document.getElementById('clienteTelefono').value,email:document.getElementById('clienteEmail').value,direccion:document.getElementById('clienteDireccion').value,vehiculos:veh.length?veh:['Vehículo pendiente por registrar'],ultima:tpClientesEditId?(tpClientes.find(x=>x.id===tpClientesEditId)?.ultima||'Sin órdenes recientes'):'Sin órdenes recientes',total:tpClientesEditId?(tpClientes.find(x=>x.id===tpClientesEditId)?.total||0):0,estado:document.getElementById('clienteEstado').value,ordenes:tpClientesEditId?(tpClientes.find(x=>x.id===tpClientesEditId)?.ordenes||0):0};
- if(tpClientesEditId){const i=tpClientes.findIndex(x=>x.id===tpClientesEditId); if(i>=0) tpClientes[i]=obj;} else tpClientes.unshift(obj); tpClienteCerrarModal(); renderClientesPro(); alert('Cliente guardado en demo visual.');
+ const datos={id:tpClientesEditId||'',nombre,cedula:document.getElementById('clienteRuc').value.trim(),telefono:document.getElementById('clienteTelefono').value.trim(),email:document.getElementById('clienteEmail').value.trim(),direccion:document.getElementById('clienteDireccion').value.trim(),ciudad:document.getElementById('clienteCiudad').value.trim(),notas:document.getElementById('clienteNotas').value.trim(),estado:document.getElementById('clienteEstado').value};
+ try{
+   const accion=tpClientesEditId?'actualizarCliente':'guardarCliente';
+   const r=await apiTallerPro(accion, datos);
+   if(!r.ok){alert(r.mensaje||'No se pudo guardar el cliente');return}
+   tpClienteCerrarModal();
+   await renderClientesPro();
+   alert('Cliente guardado en Google Sheets.');
+ }catch(err){alert('Error al guardar en Google Sheets: '+err.message)}
 }
-function tpClienteEliminar(){if(!tpClientesEditId)return;if(confirm('¿Eliminar este cliente?')){const i=tpClientes.findIndex(x=>x.id===tpClientesEditId); if(i>=0) tpClientes.splice(i,1); tpClienteCerrarModal(); renderClientesPro();}}
-function tpClienteWhatsApp(id){const c=tpClientes.find(x=>x.id===id); if(!c)return; alert('WhatsApp sugerido:\n\nHola '+c.nombre+', le saluda TallerPro. Su historial y vehículos registrados están disponibles. ¿Desea agendar una nueva revisión o mantenimiento?');}
-function tpClienteHistorial(id){const c=tpClientes.find(x=>x.id===id); if(!c)return; alert('Historial de '+c.nombre+':\nÓrdenes registradas: '+c.ordenes+'\nÚltima orden: '+c.ultima+'\nTotal acumulado: $'+c.total.toFixed(2));}
-function tpClienteNuevaOrden(id){const c=tpClientes.find(x=>x.id===id); showScreen('crear'); setTimeout(()=>alert('Demo: nueva orden precargada para '+(c?.nombre||'cliente seleccionado')),120);}
-function tpClientesCSV(){const rows=[['Nombre','Tipo','RUC','Telefono','Email','Direccion','Vehiculos','UltimaOrden','Total','Estado'],...tpClientes.map(c=>[c.nombre,c.tipo,c.ruc,c.telefono,c.email,c.direccion,c.vehiculos.join(' | '),c.ultima,c.total,c.estado])]; const csv='\ufeff'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n'); const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='clientes_tallerpro.csv'; a.click(); URL.revokeObjectURL(url);}
+async function tpClienteEliminar(id){
+ const clienteId=id||tpClientesEditId; if(!clienteId)return;
+ if(confirm('¿Marcar este cliente como inactivo?')){
+   const r=await apiTallerPro('eliminarCliente',{id:clienteId});
+   if(!r.ok){alert(r.mensaje||'No se pudo inactivar');return}
+   tpClienteCerrarModal(); await renderClientesPro();
+ }
+}
+function tpClienteWhatsApp(id){const c=tpClientes.find(x=>String(x.id)===String(id)); if(!c)return; alert('WhatsApp sugerido:\n\nHola '+c.nombre+', le saluda TallerPro. ¿Desea agendar una nueva revisión o mantenimiento?');}
+function tpClienteHistorial(id){const c=tpClientes.find(x=>String(x.id)===String(id)); if(!c)return; alert('Historial de '+c.nombre+': conectado posteriormente con órdenes.');}
+function tpClienteNuevaOrden(id){const c=tpClientes.find(x=>String(x.id)===String(id)); showScreen('crear'); setTimeout(()=>alert('Nueva orden para '+(c?.nombre||'cliente seleccionado')+' se conectará en el módulo Órdenes.'),120);}
+function tpClientesCSV(){const rows=[['ID','Nombre','Tipo','Cedula','Telefono','Email','Direccion','Ciudad','Notas','Estado'],...tpClientes.map(c=>[c.id,c.nombre,c.tipo,c.ruc,c.telefono,c.email,c.direccion,c.ciudad,c.notas,c.estado])]; const csv='\ufeff'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n'); const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='clientes_tallerpro.csv'; a.click(); URL.revokeObjectURL(url);}
 setTimeout(renderClientesPro,120);
 </script>
 
