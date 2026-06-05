@@ -721,7 +721,7 @@ async function apiTallerPro(accion, datos = {}) {
   <a class="nav-itemx" onclick="showScreen('tipos_vehículo',this)"><i class="bi bi-cpu"></i> Tipos de Vehículo</a>
   <a class="nav-itemx" onclick="showScreen('marcas',this)"><i class="bi bi-bookmark"></i> Marcas</a>
   <a class="nav-itemx" onclick="showScreen('modelos',this)"><i class="bi bi-bookmarks"></i> Modelos</a>
-  <a class="nav-itemx" onclick="showScreen('vehículoes',this)"><i class="bi bi-gear-wide-connected"></i> Vehículos</a>
+  <a class="nav-itemx" onclick="showScreen('vehiculos',this)"><i class="bi bi-gear-wide-connected"></i> Vehículos</a>
   <a class="nav-itemx" onclick="showScreen('articulos',this)"><i class="bi bi-archive"></i> Artículos</a>
   <a class="nav-itemx" onclick="showScreen('técnicos',this)"><i class="bi bi-person-workspace"></i> Técnicos operativos</a>
   <a class="nav-itemx" onclick="showScreen('partes_vehículo',this)"><i class="bi bi-puzzle"></i> Partes de Vehículo</a>
@@ -1296,7 +1296,7 @@ async function apiTallerPro(accion, datos = {}) {
     <section id="tipos_vehículo" class="screen"></section>
     <section id="marcas" class="screen"></section>
     <section id="modelos" class="screen"></section>
-    <section id="vehículoes" class="screen"></section>
+    <section id="vehiculos" class="screen"></section>
     <section id="articulos" class="screen"></section>
     <section id="técnicos" class="screen"></section>
     <section id="partes_vehículo" class="screen"></section>
@@ -1340,7 +1340,7 @@ const titles={
  tipos_vehículo:['Tipos de Servicio','Catálogo técnico de tipos de vehículo'],
  marcas:['Marcas de Vehículos','Catálogo maestro de marcas para vehículos, modelos y órdenes'],
  modelos:['Modelos de Vehículos','Catálogo de modelos asociados a marcas, años y tipo de vehículo'],
- vehículoes:['Vehículoes','Base técnica de vehículos y datos asociados'],
+ vehiculos:['Vehículos','Base técnica de vehículos y datos asociados'],
  articulos:['Artículos','Categorías de artículos e insumos'],
  técnicos:['Técnicos operativos','Personal operativo por departamento'],
  partes_vehículo:['Partes de Vehículo','Catálogo de componentes y partes del vehículo'],
@@ -1360,6 +1360,7 @@ function showScreen(id,el){
   if(id==='clientes' && typeof renderClientesPro==='function') setTimeout(renderClientesPro,20);
   if(id==='ordenes' && typeof cargarOrdenesSheets==='function') setTimeout(cargarOrdenesSheets,20);
   if(id==='crear' && typeof prepararNuevaOrden==='function') setTimeout(prepararNuevaOrden,20);
+  if(id==='vehiculos' && typeof renderVehiculosModule==='function') setTimeout(renderVehiculosModule,20);
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -2072,12 +2073,328 @@ function renderModelosVehiculoModule(){
 }
 renderModelosVehiculoModule();
 
-simpleModule('vehículoes','Vehículoes','Base técnica de vehículoes registrados.',['ID','Vehículo','Marca','Tipo Vehículo','Acción'],[
- ['469','AGRÍCOLA DEUTZ F4 912 4 CILINDRO','DEUTZ','DIÉSEL','<button class="btn btn-info btn-sm text-white">Datos Técnicos</button>'],
- ['363','AUDI V6','AUDI','DIÉSEL 1','<button class="btn btn-info btn-sm text-white">Datos Técnicos</button>'],
- ['391','BAIC X55 LUXURY 1.5 4X2 TA A151E-1','BAIC','GASOLINA 1','<button class="btn btn-info btn-sm text-white">Datos Técnicos</button>'],
- ['188','BMW 328 2.0 SEDAN','BMW','DIÉSEL 1','<button class="btn btn-info btn-sm text-white">Datos Técnicos</button>']
-],'Crear Vehículo');
+
+/* ===== MÓDULO VEHÍCULOS CONECTADO A GOOGLE SHEETS =====
+   Pantalla visible: Vehículos
+   Pestaña Google Sheets: autos
+   Acciones Apps Script: guardarAuto, listarAutos, obtenerAuto, actualizarAuto, eliminarAuto
+*/
+let tpAutosData = [];
+let tpAutoEditId = null;
+
+function vehiculoEsc(v){
+  return String(v ?? '').replace(/[&<>"']/g, m => ({
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":'&#39;'
+  }[m]));
+}
+
+function renderVehiculosModule(){
+  const cont = document.getElementById('vehiculos');
+  if(!cont) return;
+
+  cont.innerHTML = `
+    <div class="mobile-quick-title">
+      <div><b>Vehículos</b><br><span>Base técnica conectada a Google Sheets</span></div>
+      <i class="bi bi-car-front"></i>
+    </div>
+
+    <div class="cardx p-4 mb-3">
+      <div class="section-head">
+        <div>
+          <h4><i class="bi bi-car-front me-2 text-primary"></i>Vehículos</h4>
+          <p>Registro de vehículos asociado a clientes. Pestaña Google Sheets: <strong>autos</strong>.</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+          <button class="btn btn-soft" onclick="cargarAutosSheets()">
+            <i class="bi bi-arrow-clockwise me-1"></i>Actualizar
+          </button>
+          <button class="btn btn-blue" onclick="abrirAutoModal()">
+            <i class="bi bi-plus-circle me-1"></i>Nuevo vehículo
+          </button>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-4 col-12">
+          <div class="stat cardx">
+            <div class="iconbox" style="background:#eff6ff;color:#2563eb"><i class="bi bi-car-front"></i></div>
+            <div><small>Total vehículos</small><h4 id="autosTotal">0</h4><div class="trend">Google Sheets</div></div>
+          </div>
+        </div>
+        <div class="col-md-4 col-6">
+          <div class="stat cardx">
+            <div class="iconbox" style="background:#dcfce7;color:#166534"><i class="bi bi-check-circle"></i></div>
+            <div><small>Activos</small><h4 id="autosActivos">0</h4><div class="trend">Disponibles</div></div>
+          </div>
+        </div>
+        <div class="col-md-4 col-6">
+          <div class="stat cardx">
+            <div class="iconbox" style="background:#f1f5f9;color:#475569"><i class="bi bi-x-circle"></i></div>
+            <div><small>Inactivos</small><h4 id="autosInactivos">0</h4><div class="trend">Archivados</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="searchbar mb-3">
+        <div class="row g-2 align-items-end">
+          <div class="col-md-9">
+            <label class="form-label small fw-bold">Buscar</label>
+            <input id="buscarAutosInput" class="form-control" placeholder="Cliente, placa, marca, modelo, tipo o chasis" oninput="renderAutosTabla()">
+          </div>
+          <div class="col-md-3">
+            <button class="btn btn-blue w-100" onclick="renderAutosTabla()">
+              <i class="bi bi-search me-1"></i>Buscar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-modern">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Cliente</th>
+              <th>Placa</th>
+              <th>Marca</th>
+              <th>Modelo</th>
+              <th>Año</th>
+              <th>Tipo</th>
+              <th>Color</th>
+              <th>Km</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="autosTbody">
+            <tr><td colspan="11" class="text-center text-muted">Cargando vehículos...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="cliente-modal-backdrop" id="autoModal">
+      <div class="cliente-modal">
+        <div class="cliente-modal-head">
+          <h5 id="autoModalTitulo"><i class="bi bi-car-front me-2"></i>Nuevo vehículo</h5>
+          <button class="cliente-modal-close" onclick="cerrarAutoModal()"><i class="bi bi-x-lg"></i></button>
+        </div>
+
+        <div class="cliente-modal-body">
+          <input type="hidden" id="autoIdEdit">
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Cliente *</label>
+              <input id="autoCliente" class="form-control" placeholder="Nombre del cliente">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Placa *</label>
+              <input id="autoPlaca" class="form-control" placeholder="Ej: GYE-1234" style="text-transform:uppercase">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small fw-bold">Marca</label>
+              <input id="autoMarca" class="form-control" placeholder="Ej: Chevrolet" style="text-transform:uppercase">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small fw-bold">Modelo</label>
+              <input id="autoModelo" class="form-control" placeholder="Ej: D-Max" style="text-transform:uppercase">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small fw-bold">Año</label>
+              <input id="autoAnio" class="form-control" placeholder="2022">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small fw-bold">Tipo</label>
+              <input id="autoTipo" class="form-control" placeholder="Camioneta, SUV, automóvil" style="text-transform:uppercase">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small fw-bold">Color</label>
+              <input id="autoColor" class="form-control" placeholder="Blanco" style="text-transform:uppercase">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small fw-bold">Kilometraje</label>
+              <input id="autoKm" class="form-control" placeholder="50000">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Chasis</label>
+              <input id="autoChasis" class="form-control" placeholder="Código de chasis">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Estado</label>
+              <select id="autoEstado" class="form-select">
+                <option>Activo</option>
+                <option>Inactivo</option>
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="form-label small fw-bold">Notas</label>
+              <textarea id="autoNotas" class="form-control" rows="3" placeholder="Observaciones del vehículo"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="cliente-modal-foot">
+          <button class="btn btn-outline-secondary" onclick="cerrarAutoModal()">Cancelar</button>
+          <button class="btn btn-blue" onclick="guardarAutoDesdeHTML()"><i class="bi bi-save me-1"></i>Guardar</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  cargarAutosSheets();
+}
+
+async function cargarAutosSheets(){
+  const tbody = document.getElementById('autosTbody');
+  if(tbody) tbody.innerHTML = '<tr><td colspan="11" class="text-center text-muted">Cargando desde Google Sheets...</td></tr>';
+
+  try{
+    const r = await apiTallerPro('listarAutos');
+    if(!r.ok) throw new Error(r.mensaje || 'No se pudieron listar vehículos');
+    tpAutosData = r.autos || [];
+    renderAutosTabla();
+  }catch(err){
+    if(tbody) tbody.innerHTML = `<tr><td colspan="11" class="text-center text-danger">Error: ${vehiculoEsc(err.message)}</td></tr>`;
+    alert('Error de conexión con Apps Script al listar vehículos: ' + err.message);
+  }
+}
+
+function renderAutosTabla(){
+  const q = (document.getElementById('buscarAutosInput')?.value || '').toLowerCase().trim();
+  const tbody = document.getElementById('autosTbody');
+  if(!tbody) return;
+
+  const rows = tpAutosData.filter(a => {
+    const texto = [
+      a.id, a.cliente, a.placa, a.marca, a.modelo, a.anio, a.tipo, a.color, a.km, a.chasis, a.notas, a.estado
+    ].join(' ').toLowerCase();
+    return !q || texto.includes(q);
+  });
+
+  const activos = tpAutosData.filter(a => String(a.estado || '').toLowerCase() !== 'inactivo').length;
+  const inactivos = tpAutosData.filter(a => String(a.estado || '').toLowerCase() === 'inactivo').length;
+  const totalEl = document.getElementById('autosTotal');
+  const activosEl = document.getElementById('autosActivos');
+  const inactivosEl = document.getElementById('autosInactivos');
+  if(totalEl) totalEl.textContent = tpAutosData.length;
+  if(activosEl) activosEl.textContent = activos;
+  if(inactivosEl) inactivosEl.textContent = inactivos;
+
+  if(!rows.length){
+    tbody.innerHTML = '<tr><td colspan="11" class="text-center text-muted">No hay vehículos registrados.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = rows.map(a => `
+    <tr>
+      <td><strong>${vehiculoEsc(a.id)}</strong></td>
+      <td>${vehiculoEsc(a.cliente)}</td>
+      <td><span class="badgex b-gray">${vehiculoEsc(a.placa)}</span></td>
+      <td>${vehiculoEsc(a.marca)}</td>
+      <td>${vehiculoEsc(a.modelo)}</td>
+      <td>${vehiculoEsc(a.anio)}</td>
+      <td>${vehiculoEsc(a.tipo)}</td>
+      <td>${vehiculoEsc(a.color)}</td>
+      <td>${vehiculoEsc(a.km)}</td>
+      <td>${String(a.estado || 'Activo').toLowerCase()==='inactivo' ? '<span class="badgex b-danger">Inactivo</span>' : '<span class="badgex b-ok">Activo</span>'}</td>
+      <td>
+        <button class="btn btn-soft btn-sm" onclick="editarAuto('${vehiculoEsc(a.id)}')"><i class="bi bi-pencil"></i></button>
+        <button class="btn btn-outline-danger btn-sm" onclick="inactivarAuto('${vehiculoEsc(a.id)}')"><i class="bi bi-trash"></i></button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function abrirAutoModal(){
+  if(!document.getElementById('autoModal') && typeof renderVehiculosModule==='function') renderVehiculosModule();
+  tpAutoEditId = null;
+  document.getElementById('autoModalTitulo').innerHTML = '<i class="bi bi-car-front me-2"></i>Nuevo vehículo';
+  document.getElementById('autoIdEdit').value = '';
+  ['autoCliente','autoPlaca','autoMarca','autoModelo','autoAnio','autoTipo','autoColor','autoKm','autoChasis','autoNotas'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+  document.getElementById('autoEstado').value = 'Activo';
+  document.getElementById('autoModal').classList.add('show');
+}
+
+function cerrarAutoModal(){
+  document.getElementById('autoModal')?.classList.remove('show');
+}
+
+function editarAuto(id){
+  const a = tpAutosData.find(x => String(x.id) === String(id));
+  if(!a){ alert('Vehículo no encontrado.'); return; }
+
+  tpAutoEditId = id;
+  document.getElementById('autoModalTitulo').innerHTML = '<i class="bi bi-pencil-square me-2"></i>Editar vehículo';
+  document.getElementById('autoIdEdit').value = a.id || '';
+  document.getElementById('autoCliente').value = a.cliente || '';
+  document.getElementById('autoPlaca').value = a.placa || '';
+  document.getElementById('autoMarca').value = a.marca || '';
+  document.getElementById('autoModelo').value = a.modelo || '';
+  document.getElementById('autoAnio').value = a.anio || '';
+  document.getElementById('autoTipo').value = a.tipo || '';
+  document.getElementById('autoColor').value = a.color || '';
+  document.getElementById('autoKm').value = a.km || '';
+  document.getElementById('autoChasis').value = a.chasis || '';
+  document.getElementById('autoNotas').value = a.notas || '';
+  document.getElementById('autoEstado').value = a.estado || 'Activo';
+  document.getElementById('autoModal').classList.add('show');
+}
+
+async function guardarAutoDesdeHTML(){
+  const datos = {
+    id: document.getElementById('autoIdEdit')?.value || '',
+    cliente: document.getElementById('autoCliente')?.value.trim() || '',
+    placa: document.getElementById('autoPlaca')?.value.trim().toUpperCase() || '',
+    marca: document.getElementById('autoMarca')?.value.trim().toUpperCase() || '',
+    modelo: document.getElementById('autoModelo')?.value.trim().toUpperCase() || '',
+    anio: document.getElementById('autoAnio')?.value.trim() || '',
+    tipo: document.getElementById('autoTipo')?.value.trim().toUpperCase() || '',
+    color: document.getElementById('autoColor')?.value.trim().toUpperCase() || '',
+    km: document.getElementById('autoKm')?.value.trim() || '',
+    chasis: document.getElementById('autoChasis')?.value.trim() || '',
+    notas: document.getElementById('autoNotas')?.value.trim() || '',
+    estado: document.getElementById('autoEstado')?.value || 'Activo'
+  };
+
+  if(!datos.cliente){ alert('Ingrese el cliente del vehículo.'); return; }
+  if(!datos.placa){ alert('Ingrese la placa del vehículo.'); return; }
+
+  try{
+    const accion = datos.id ? 'actualizarAuto' : 'guardarAuto';
+    const r = await apiTallerPro(accion, datos);
+    if(!r.ok) throw new Error(r.mensaje || 'No se pudo guardar el vehículo');
+
+    cerrarAutoModal();
+    await cargarAutosSheets();
+    alert('Vehículo guardado en Google Sheets: ' + (r.id || datos.id || ''));
+  }catch(err){
+    alert('Error al guardar vehículo: ' + err.message);
+  }
+}
+
+async function inactivarAuto(id){
+  if(!confirm('¿Desea marcar este vehículo como inactivo?')) return;
+
+  try{
+    const r = await apiTallerPro('eliminarAuto', {id});
+    if(!r.ok) throw new Error(r.mensaje || 'No se pudo inactivar el vehículo');
+    await cargarAutosSheets();
+    alert('Vehículo marcado como inactivo.');
+  }catch(err){
+    alert('Error al inactivar vehículo: ' + err.message);
+  }
+}
+
+renderVehiculosModule();
+
 
 simpleModule('articulos','Artículos','Categorías de artículos e insumos.',['ID','Descripción','Acciones'],[
  ['5','REPUESTOS VARIOS','<button class="btn btn-warning btn-sm">Editar</button> <button class="btn btn-danger btn-sm">Eliminar</button>'],
@@ -2571,7 +2888,7 @@ document.getElementById('seguimiento_whatsapp').innerHTML=`
 </div>`;
 
 function buildExtraMobileCardsV2(){
-  const ids=['proveedores','facturar','abonos','pago_mecanicos','reporte_ordenes','reporte_facturas','reporte_ingresos','tipos_vehículo','marcas','modelos','vehículoes','articulos','técnicos','partes_vehículo','qr_publicos','seguimiento_whatsapp'];
+  const ids=['proveedores','facturar','abonos','pago_mecanicos','reporte_ordenes','reporte_facturas','reporte_ingresos','tipos_vehículo','marcas','modelos','vehiculos','articulos','técnicos','partes_vehículo','qr_publicos','seguimiento_whatsapp'];
   ids.forEach(id=>{
     const container=document.querySelector(`#${id} .cardx`);
     if(!container || container.querySelector('.mobile-card-list')) return;
