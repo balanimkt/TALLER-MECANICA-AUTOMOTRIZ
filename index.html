@@ -570,6 +570,31 @@ body{
 .modalx-id{background:#e5e7eb!important;font-weight:800;color:#334155}
 @media(max-width:900px){.labor-toolbar{align-items:stretch}.labor-filters,.labor-filters .form-control,.labor-filters .form-select,.labor-toolbar .btn{width:100%;min-width:0}.modalx{width:96vw;max-height:90vh;overflow:auto}.modalx-head h3{font-size:20px}.modalx-body{padding:18px}.modalx-actions{display:grid;grid-template-columns:1fr 1fr}.modalx-actions .btn{width:100%}}
 
+
+
+/* ===== MÓDULO PIZARRA AVANZADA PARA TALLER AUTOMOTRIZ ===== */
+.piz-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.piz-title{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.piz-title h4{margin:0;font-size:20px;font-weight:900;color:var(--dark)}
+.piz-toggle{display:inline-flex;gap:3px;background:#eef2f7;padding:4px;border-radius:12px;border:1px solid var(--line)}
+.piz-toggle button{border:0;background:transparent;padding:7px 13px;border-radius:9px;font-size:12px;font-weight:900;color:#64748b}
+.piz-toggle button.active{background:#0f172a;color:#fff;box-shadow:0 6px 16px rgba(15,23,42,.16)}
+.piz-actions{display:flex;gap:8px;flex-wrap:wrap}
+.piz-filters{background:white;border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 8px 18px rgba(15,23,42,.04)}
+.piz-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.piz-stat{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:14px;text-align:center;box-shadow:0 8px 18px rgba(15,23,42,.04)}
+.piz-stat .val{font-size:26px;font-weight:900;line-height:1;color:#0f172a}.piz-stat .lbl{font-size:11px;color:#64748b;text-transform:uppercase;font-weight:900;margin-top:6px;letter-spacing:.3px}
+.piz-day-title{font-weight:900;color:#0f172a;margin:14px 0 10px;border-bottom:2px solid #e2e8f0;padding-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.piz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:13px;margin-bottom:18px}
+.piz-card{position:relative;background:#fff;border:1px solid #e2e8f0;border-left:6px solid #2563eb;border-radius:18px;padding:15px;box-shadow:0 10px 22px rgba(15,23,42,.06);transition:.18s ease;cursor:pointer;overflow:hidden}
+.piz-card:hover{transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,.11)}
+.piz-card.vencida{background:#fff5f5;border-left-color:#dc2626}.piz-card.vencida:after{content:'VENCIDA';position:absolute;top:10px;right:10px;background:#dc2626;color:white;font-size:10px;border-radius:999px;padding:4px 8px;font-weight:900}
+.piz-card-header{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;margin-bottom:11px}.piz-ot{font-size:24px;font-weight:950;color:#0f172a}.piz-card-actions{display:flex;gap:5px;align-items:center;flex-wrap:wrap;justify-content:flex-end;max-width:175px}
+.piz-mini-btn{border:1px solid #dbe3ef;background:#fff;border-radius:9px;padding:5px 7px;font-size:11px;color:#334155}.piz-mini-btn:hover{background:#eff6ff;color:#1d4ed8}
+.piz-line{border-top:1px dashed #e2e8f0;padding-top:8px;margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:8px}.piz-label{font-size:10px;color:#64748b;text-transform:uppercase;font-weight:900;letter-spacing:.35px}.piz-value{font-size:13px;color:#1e293b;font-weight:800;line-height:1.25}.piz-muted{font-size:12px;color:#64748b}.piz-time{font-size:18px;font-weight:900;color:#2563eb}.piz-calendar{display:none}.piz-calendar.active,.piz-board.active{display:block}.piz-calendar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.piz-calendar-card{background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:16px;box-shadow:0 8px 18px rgba(15,23,42,.04)}.piz-calendar-card h5{font-size:15px;font-weight:900;margin:0 0 10px;color:#0f172a}.piz-cal-event{border-left:5px solid #2563eb;background:#f8fafc;border-radius:13px;padding:10px;margin-bottom:9px}.piz-empty{text-align:center;color:#94a3b8;background:#fff;border:1px dashed #cbd5e1;border-radius:18px;padding:34px;font-weight:800}
+.piz-modal-backdrop{display:none;position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:9998;padding:18px;overflow:auto}.piz-modal-backdrop.show{display:flex;align-items:flex-start;justify-content:center}.piz-modal{width:min(820px,100%);background:#fff;border-radius:22px;box-shadow:0 25px 70px rgba(15,23,42,.28);margin-top:24px;overflow:hidden}.piz-modal-head{background:#0f172a;color:white;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;gap:12px}.piz-modal-head h5{margin:0;font-weight:900}.piz-close{border:0;background:rgba(255,255,255,.12);color:white;width:38px;height:38px;border-radius:12px;font-size:18px}.piz-modal-body{padding:22px}.piz-modal-foot{background:#f8fafc;border-top:1px solid #e2e8f0;padding:16px 22px;display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}.piz-order-number{background:#e8f5e9;color:#166534;border:2px solid #bbf7d0;border-radius:16px;font-size:34px;font-weight:950;text-align:center;padding:10px}.piz-info-box{display:none;border:1px solid #bfdbfe;background:#f8fbff;border-radius:16px;padding:14px;margin-top:12px}.piz-info-box.show{display:block}.piz-suggestions{display:none;position:absolute;left:0;right:0;top:100%;z-index:40;background:#fff;border:1px solid #dbe3ef;border-radius:14px;box-shadow:0 18px 35px rgba(15,23,42,.13);max-height:220px;overflow:auto}.piz-suggestions button{display:block;width:100%;border:0;background:#fff;text-align:left;padding:11px 13px;border-bottom:1px solid #f1f5f9}.piz-suggestions button:hover{background:#eff6ff}.piz-suggestions button:last-child{border-bottom:0}
+@media(max-width:900px){.piz-toolbar{align-items:flex-start}.piz-title,.piz-actions{width:100%}.piz-actions .btn,.piz-actions button{flex:1}.piz-toggle{width:100%;display:grid;grid-template-columns:1fr 1fr}.piz-stats{grid-template-columns:repeat(2,1fr)}.piz-grid{grid-template-columns:1fr}.piz-calendar-grid{grid-template-columns:1fr}.piz-modal-backdrop{padding:9px}.piz-modal{margin-top:8px;border-radius:18px}.piz-modal-body{padding:16px}.piz-modal-foot{padding:14px}.piz-card-actions{max-width:none}.piz-ot{font-size:21px}}
+
 </style>
 </head>
 <body>
@@ -873,18 +898,120 @@ body{
       </div>
     </section>
 
-    <section id="pizarra" class="screen">
-      <div class="mobile-quick-title"><div><b>Pizarra</b><br><span>Producción por estados</span></div><i class="bi bi-kanban"></i></div>
 
-      <div class="section-head">
-        <div><h4>Pizarra de producción</h4><p>Tablero visual para controlar el flujo del taller.</p></div>
-        <button class="btn btn-blue"><i class="bi bi-plus-circle me-1"></i> Agregar tarea</button>
+    <section id="pizarra" class="screen">
+      <div class="mobile-quick-title"><div><b>Pizarra</b><br><span>Tablero y calendario de trabajos</span></div><i class="bi bi-kanban"></i></div>
+
+      <div class="piz-toolbar">
+        <div class="piz-title">
+          <h4><i class="bi bi-kanban me-2"></i>Pizarra de producción</h4>
+          <div class="piz-toggle" role="group">
+            <button id="pizBtnTablero" class="active" onclick="tpPizarraVista('tablero')">📋 Tablero</button>
+            <button id="pizBtnCalendario" onclick="tpPizarraVista('calendario')">📅 Calendario</button>
+          </div>
+        </div>
+        <div class="piz-actions">
+          <button class="btn btn-soft" onclick="tpPizarraRender()"><i class="bi bi-arrow-clockwise me-1"></i>Actualizar</button>
+          <button class="btn btn-blue" onclick="tpPizarraNuevo()"><i class="bi bi-plus-circle me-1"></i>Agregar registro manual</button>
+        </div>
       </div>
-      <div class="kanban">
-        <div class="kanban-col"><h5>Recibido <span class="badgex b-rec">17</span></h5><div class="ticket"><b>OT #1054</b><div class="subtext">CHEVROLET LUV D-MAX</div><hr><div class="subtext">Técnico: CARLOS MENDOZA</div><div class="bar"><span style="width:20%"></span></div></div><div class="ticket"><b>OT #1056</b><div class="subtext">TOYOTA LAND CRUISER</div><hr><div class="subtext">MIGUEL ÁNGEL ZAMBRANO</div><div class="bar"><span style="width:12%"></span></div></div></div>
-        <div class="kanban-col"><h5>En proceso <span class="badgex b-pro">3</span></h5><div class="ticket"><b>OT #10</b><div class="subtext">MAZDA BT-50 DIESEL</div><hr><div class="subtext">Técnico asignado</div><div class="bar"><span style="width:58%"></span></div></div></div>
-        <div class="kanban-col"><h5>Terminado <span class="badgex b-ok">0</span></h5><div class="text-center text-muted mt-5">Sin órdenes terminadas</div></div>
-        <div class="kanban-col"><h5>Entregado <span class="badgex b-gray">0</span></h5><div class="text-center text-muted mt-5">Sin entregas registradas</div></div>
+
+      <div class="piz-board active" id="pizVistaTablero">
+        <div class="piz-filters">
+          <div class="row g-2 align-items-end">
+            <div class="col-md-4">
+              <label class="form-label small fw-bold mb-1">Buscar</label>
+              <input id="pizBuscar" type="text" class="form-control" placeholder="Nº orden, placa, cliente, técnico..." oninput="tpPizarraRender()">
+              <div class="subtext mt-1" id="pizAvisoFechas" style="display:none"><i class="bi bi-info-circle"></i> Buscando en todas las fechas.</div>
+            </div>
+            <div class="col-md-2"><label class="form-label small fw-bold mb-1">Desde</label><input id="pizDesde" type="date" class="form-control" value="2026-06-04" onchange="tpPizarraRender()"></div>
+            <div class="col-md-2"><label class="form-label small fw-bold mb-1">Hasta</label><input id="pizHasta" type="date" class="form-control" value="2026-06-04" onchange="tpPizarraRender()"></div>
+            <div class="col-md-4 d-flex gap-2">
+              <button class="btn btn-blue flex-grow-1" onclick="tpPizarraRender()"><i class="bi bi-search me-1"></i>Aplicar filtros</button>
+              <button class="btn btn-soft" onclick="tpPizarraHoy()" title="Solo hoy"><i class="bi bi-calendar-event me-1"></i>Hoy</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="piz-stats">
+          <div class="piz-stat"><div class="val text-primary" id="pizStTotal">0</div><div class="lbl">Órdenes</div></div>
+          <div class="piz-stat"><div class="val text-warning" id="pizStHoy">0</div><div class="lbl">Entrega hoy</div></div>
+          <div class="piz-stat"><div class="val text-danger" id="pizStVencidas">0</div><div class="lbl">Vencidas</div></div>
+          <div class="piz-stat"><div class="val text-secondary" id="pizStSinHora">0</div><div class="lbl">Sin hora</div></div>
+        </div>
+        <div id="pizTableroGrid"></div>
+      </div>
+
+      <div class="piz-calendar" id="pizVistaCalendario">
+        <div class="piz-filters d-flex gap-2 align-items-center flex-wrap">
+          <span class="fw-bold text-muted small me-2">Prioridad:</span>
+          <span class="badgex b-ok">🟢 Normal</span>
+          <span class="badgex b-pro">🟡 Urgente</span>
+          <span class="badgex b-danger">🔴 Muy urgente</span>
+          <button class="btn btn-soft ms-auto" onclick="tpPizarraRenderCalendario()"><i class="bi bi-arrow-clockwise me-1"></i>Actualizar calendario</button>
+        </div>
+        <div class="piz-calendar-grid" id="pizCalendarioGrid"></div>
+      </div>
+
+      <div class="piz-modal-backdrop" id="pizModalBackdrop">
+        <div class="piz-modal">
+          <div class="piz-modal-head">
+            <h5 id="pizModalTitulo"><i class="bi bi-calendar-plus me-2"></i>Nuevo registro de Pizarra</h5>
+            <button class="piz-close" onclick="tpPizarraCerrar()"><i class="bi bi-x-lg"></i></button>
+          </div>
+          <div class="piz-modal-body">
+            <input type="hidden" id="pizEditId">
+            <input type="hidden" id="pizOrdenId">
+            <div class="row g-3 mb-3">
+              <div class="col-md-3">
+                <label class="form-label small fw-bold">Nro Orden</label>
+                <div id="pizNroOrden" class="piz-order-number">-</div>
+              </div>
+              <div class="col-md-5">
+                <label class="form-label small fw-bold">Recibido el</label>
+                <input id="pizFechaRec" class="form-control" readonly placeholder="—" style="background:#f8f9fa">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-bold">Hora de entrega</label>
+                <input type="time" id="pizHoraEntrega" class="form-control">
+                <small class="text-muted">Ubica la orden en el calendario</small>
+              </div>
+            </div>
+
+            <div class="mb-3 position-relative">
+              <label class="form-label small fw-bold">Orden de trabajo <span class="text-danger">*</span></label>
+              <input type="text" id="pizBuscarOrden" class="form-control" placeholder="Escribe número de orden, placa o cliente..." autocomplete="off" oninput="tpPizarraSugerirOrden()">
+              <div id="pizSugerencias" class="piz-suggestions"></div>
+            </div>
+
+            <div id="pizInfoOrden" class="piz-info-box">
+              <div class="row g-2 small">
+                <div class="col-md-6"><span class="text-muted">Vehículo:</span> <strong id="pizVehiculo">-</strong></div>
+                <div class="col-md-6"><span class="text-muted">Servicio:</span> <strong id="pizServicio">-</strong></div>
+                <div class="col-md-6"><span class="text-muted">Cliente:</span> <strong id="pizCliente">-</strong></div>
+                <div class="col-md-6"><span class="text-muted">Placa:</span> <strong id="pizPlaca">-</strong></div>
+                <div class="col-md-6"><span class="text-muted">Técnico:</span> <strong id="pizTecnico">-</strong></div>
+              </div>
+            </div>
+
+            <div class="row g-2 mt-3 mb-3">
+              <div class="col-md-4"><label class="form-label small fw-bold">Nivel de exigencia</label><select id="pizExigencia" class="form-select"><option value="1">🟢 Normal</option><option value="2">🟡 Urgente</option><option value="3">🔴 Muy urgente</option></select></div>
+              <div class="col-md-4"><label class="form-label small fw-bold">Color en calendario</label><select id="pizColor" class="form-select"><option value="AZUL">🔵 AZUL</option><option value="NARANJA">🟠 NARANJA</option><option value="ROJO">🔴 ROJO</option><option value="VERDE">🟢 VERDE</option><option value="AMARILLO">🟡 AMARILLO</option><option value="MORADO">🟣 MORADO</option></select></div>
+              <div class="col-md-2"><label class="form-label small fw-bold">Etiquetas</label><input id="pizCantEtiq" type="number" class="form-control" value="1" min="1"></div>
+              <div class="col-md-2 d-flex align-items-end"><button class="btn btn-soft w-100" onclick="tpPizarraImprimirEtiqueta()"><i class="bi bi-tag me-1"></i>Imprimir</button></div>
+            </div>
+
+            <div class="row g-2">
+              <div class="col-md-4"><label class="form-label small fw-bold">Fecha registro</label><input id="pizFecha" type="date" class="form-control" value="2026-06-04"></div>
+              <div class="col-md-8"><label class="form-label small fw-bold">Tarea / Descripción</label><input id="pizTarea" class="form-control" placeholder="Detalle de la tarea a realizar"></div>
+            </div>
+          </div>
+          <div class="piz-modal-foot">
+            <button class="btn btn-outline-danger me-auto" id="pizBtnEliminar" style="display:none" onclick="tpPizarraEliminar()"><i class="bi bi-trash me-1"></i>Eliminar</button>
+            <button class="btn btn-soft" onclick="tpPizarraCerrar()">Cancelar</button>
+            <button class="btn btn-blue" onclick="tpPizarraGuardar()"><i class="bi bi-save me-1"></i>Guardar registro</button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1420,6 +1547,105 @@ function buildExtraMobileCardsV2(){
 }
 setTimeout(buildExtraMobileCardsV2,50);
 
+
+
+/* ===== JS PIZARRA AVANZADA - DEMO VISUAL ===== */
+const tpPizarraOrdenesBase = [
+  {id:1056, fecha:'2026-06-04 08:20', cliente:'CRISTIAN ALEJANDRO MORALES', placa:'GSA-4821', vehiculo:'TOYOTA HILUX 2.8', servicio:'Escáner + mantenimiento preventivo', tecnico:'CARLOS MENDOZA', estado:'EN PROCESO'},
+  {id:1055, fecha:'2026-06-04 09:10', cliente:'EDUARDO JAVIER CASTILLO', placa:'GTR-1190', vehiculo:'CHEVROLET SAIL 1.5', servicio:'Cambio de embrague', tecnico:'FERNANDO MORALES', estado:'RECIBIDO'},
+  {id:1054, fecha:'2026-06-03 15:40', cliente:'MIGUEL ÁNGEL ZAMBRANO', placa:'PBY-7612', vehiculo:'CHEVROLET D-MAX 2.4', servicio:'Revisión de motor y frenos', tecnico:'CARLOS MENDOZA', estado:'RECIBIDO'},
+  {id:1053, fecha:'2026-06-03 11:25', cliente:'GABRIEL EDUARDO MORENO', placa:'GQU-3201', vehiculo:'HYUNDAI TUCSON IX 2.0', servicio:'Alineación + suspensión', tecnico:'LUIS HERRERA', estado:'LISTO'},
+  {id:1051, fecha:'2026-06-02 10:05', cliente:'JORGE RAMÍREZ', placa:'GBB-9088', vehiculo:'FORD F-150', servicio:'Mantenimiento caja de cambios', tecnico:'JORGE RAMÍREZ', estado:'EN PROCESO'}
+];
+let tpPizarraRegistros = [
+  {rid:1, id:1056, entrega:'2026-06-04 16:30', tarea:'Diagnóstico con escáner y revisión de sensores', color:'AZUL', exigencia:2, etiquetas:1},
+  {rid:2, id:1054, entrega:'2026-06-04 13:00', tarea:'Revisión integral de frenos y motor', color:'ROJO', exigencia:3, etiquetas:2},
+  {rid:3, id:1053, entrega:'2026-06-05 10:30', tarea:'Prueba de ruta y entrega al cliente', color:'VERDE', exigencia:1, etiquetas:1},
+  {rid:4, id:1051, entrega:'', tarea:'Esperando repuestos de caja de cambios', color:'NARANJA', exigencia:2, etiquetas:1}
+];
+const tpColorMap={AZUL:'#2563eb',NARANJA:'#f59e0b',ROJO:'#dc2626',VERDE:'#16a34a',AMARILLO:'#eab308',MORADO:'#9333ea'};
+const tpExig={1:['Normal','#16a34a'],2:['Urgente','#f59e0b'],3:['Muy urgente','#dc2626']};
+function tpPizFullRows(){return tpPizarraRegistros.map(r=>({...tpPizarraOrdenesBase.find(o=>o.id==r.id),...r})).filter(r=>r.id)}
+function tpFechaLarga(fecha){try{const d=new Date(fecha+'T00:00:00');return d.toLocaleDateString('es-EC',{weekday:'long',year:'numeric',month:'long',day:'numeric'}).replace(/^./,m=>m.toUpperCase())}catch(e){return fecha}}
+function tpHora(f){if(!f)return '<span class="text-muted">Sin hora</span>'; const d=new Date(String(f).replace(' ','T')); return d.toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit',hour12:false})}
+function tpFechaCorta(f){if(!f)return ''; const d=new Date(String(f).replace(' ','T')); return d.toLocaleDateString('es-EC',{day:'2-digit',month:'2-digit',year:'numeric'})}
+function tpPizarraVista(v){
+  document.getElementById('pizVistaTablero')?.classList.toggle('active',v==='tablero');
+  document.getElementById('pizVistaCalendario')?.classList.toggle('active',v==='calendario');
+  document.getElementById('pizBtnTablero')?.classList.toggle('active',v==='tablero');
+  document.getElementById('pizBtnCalendario')?.classList.toggle('active',v==='calendario');
+  if(v==='calendario') tpPizarraRenderCalendario(); else tpPizarraRender();
+}
+function tpPizarraFiltrar(){
+  const q=(document.getElementById('pizBuscar')?.value||'').toLowerCase().trim();
+  const desde=document.getElementById('pizDesde')?.value||''; const hasta=document.getElementById('pizHasta')?.value||'';
+  const aviso=document.getElementById('pizAvisoFechas'); if(aviso) aviso.style.display=q?'block':'none';
+  return tpPizFullRows().filter(r=>{
+    const txt=[r.id,r.placa,r.cliente,r.tecnico,r.vehiculo,r.servicio,r.estado,r.tarea].join(' ').toLowerCase();
+    if(q) return txt.includes(q);
+    const dia=(r.fecha||'').substring(0,10);
+    return (!desde||dia>=desde)&&(!hasta||dia<=hasta);
+  });
+}
+function tpPizarraRender(){
+  const grid=document.getElementById('pizTableroGrid'); if(!grid) return;
+  const rows=tpPizarraFiltrar(); const hoy='2026-06-04'; const ahora=new Date('2026-06-04T14:00:00');
+  let nHoy=0,nV=0,nS=0; rows.forEach(r=>{if(!r.entrega)nS++; else{if(r.entrega.substring(0,10)===hoy)nHoy++; if(new Date(r.entrega.replace(' ','T'))<ahora)nV++;}})
+  document.getElementById('pizStTotal').textContent=rows.length; document.getElementById('pizStHoy').textContent=nHoy; document.getElementById('pizStVencidas').textContent=nV; document.getElementById('pizStSinHora').textContent=nS;
+  if(!rows.length){grid.innerHTML='<div class="piz-empty">Sin registros en el rango seleccionado.</div>';return;}
+  const grupos={}; rows.forEach(r=>{const d=(r.fecha||'').substring(0,10)||'Sin fecha'; (grupos[d]??=[]).push(r)});
+  grid.innerHTML=Object.keys(grupos).sort((a,b)=>b.localeCompare(a)).map(d=>{
+    const cards=grupos[d].sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||'')).map(r=>tpPizarraCard(r,ahora)).join('');
+    return `<div class="piz-day-title"><span><i class="bi bi-calendar-day me-2"></i>${d==='Sin fecha'?d:tpFechaLarga(d)} ${d===hoy?'<span class="badgex b-ok ms-2">HOY</span>':''}</span><small class="text-muted">${grupos[d].length} orden(es)</small></div><div class="piz-grid">${cards}</div>`
+  }).join('');
+}
+function tpPizarraCard(r,ahora){
+  const vencida=r.entrega && new Date(r.entrega.replace(' ','T'))<ahora; const ex=tpExig[r.exigencia]||tpExig[1]; const color=tpColorMap[r.color]||'#2563eb';
+  return `<div class="piz-card ${vencida?'vencida':''}" style="border-left-color:${color}" onclick="showScreen('detalle')">
+    <div class="piz-card-header"><div><div class="piz-ot">OT #${r.id}</div><div class="piz-muted">${r.cliente}</div></div><div class="piz-card-actions">
+      <span class="badgex" style="background:${ex[1]}22;color:${ex[1]}">${ex[0]}</span><span class="badgex b-rec">${r.estado}</span>
+      <button class="piz-mini-btn" title="Editar" onclick="event.stopPropagation();tpPizarraEditar(${r.rid})"><i class="bi bi-pencil"></i></button>
+      <button class="piz-mini-btn" title="WhatsApp" onclick="event.stopPropagation();tpPizarraWhatsApp(${r.rid})"><i class="bi bi-whatsapp"></i></button>
+    </div></div>
+    <div class="piz-line"><div><div class="piz-label">Ingreso</div><div class="piz-value">🕐 ${tpHora(r.fecha)}</div></div><div class="text-end"><div class="piz-label">Entrega</div><div class="piz-time">⏰ ${tpHora(r.entrega)}</div><div class="piz-muted">${tpFechaCorta(r.entrega)}</div></div></div>
+    <div class="mt-2"><div class="piz-label">Vehículo</div><div class="piz-value">${r.vehiculo}</div></div>
+    <div class="mt-2"><div class="piz-label">Servicio / tarea</div><div class="piz-value">${r.tarea||r.servicio}</div></div>
+    <div class="piz-line"><div><div class="piz-label">Placa</div><div class="piz-value">${r.placa}</div></div><div class="text-end"><div class="piz-label">Técnico</div><div class="piz-value">👨‍🔧 ${r.tecnico}</div></div></div>
+  </div>`
+}
+function tpPizarraRenderCalendario(){
+  const cont=document.getElementById('pizCalendarioGrid'); if(!cont) return; const rows=tpPizFullRows();
+  const dias=['2026-06-04','2026-06-05','2026-06-06'];
+  cont.innerHTML=dias.map(d=>`<div class="piz-calendar-card"><h5><i class="bi bi-calendar-event me-1"></i>${tpFechaLarga(d)}</h5>${rows.filter(r=>(r.entrega||'').substring(0,10)===d).map(r=>`<div class="piz-cal-event" style="border-left-color:${tpColorMap[r.color]||'#2563eb'}"><b>OT #${r.id}</b> · ${tpHora(r.entrega)}<br><span class="piz-muted">${r.vehiculo}</span><br><span class="piz-muted">${r.tarea}</span></div>`).join('')||'<div class="piz-empty" style="padding:18px">Sin entregas programadas</div>'}</div>`).join('');
+}
+function tpPizarraHoy(){document.getElementById('pizDesde').value='2026-06-04';document.getElementById('pizHasta').value='2026-06-04';document.getElementById('pizBuscar').value='';tpPizarraRender()}
+function tpPizarraNuevo(){
+  document.getElementById('pizModalTitulo').innerHTML='<i class="bi bi-calendar-plus me-2"></i>Nuevo registro de Pizarra';
+  ['pizEditId','pizOrdenId','pizFechaRec','pizHoraEntrega','pizTarea','pizBuscarOrden'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('pizNroOrden').textContent='-'; document.getElementById('pizFecha').value='2026-06-04'; document.getElementById('pizColor').value='AZUL'; document.getElementById('pizExigencia').value='1'; document.getElementById('pizCantEtiq').value='1';
+  document.getElementById('pizInfoOrden').classList.remove('show'); document.getElementById('pizBtnEliminar').style.display='none'; document.getElementById('pizModalBackdrop').classList.add('show'); setTimeout(()=>document.getElementById('pizBuscarOrden').focus(),100);
+}
+function tpPizarraCerrar(){document.getElementById('pizModalBackdrop')?.classList.remove('show');document.getElementById('pizSugerencias').style.display='none'}
+function tpPizarraSugerirOrden(){
+  const q=(document.getElementById('pizBuscarOrden').value||'').toLowerCase().trim(); const sug=document.getElementById('pizSugerencias');
+  if(q.length<1){sug.style.display='none';return} const res=tpPizarraOrdenesBase.filter(o=>[o.id,o.placa,o.cliente,o.vehiculo,o.servicio].join(' ').toLowerCase().includes(q)).slice(0,6);
+  sug.innerHTML=res.map(o=>`<button onclick="tpPizarraSeleccionar(${o.id})"><strong>OT #${o.id}</strong> <span class="badgex b-rec ms-2">${o.estado}</span><br><span class="piz-muted">${o.cliente} · ${o.placa} · ${o.vehiculo}</span></button>`).join(''); sug.style.display=res.length?'block':'none';
+}
+function tpPizarraSeleccionar(id){
+  const o=tpPizarraOrdenesBase.find(x=>x.id==id); if(!o)return; document.getElementById('pizOrdenId').value=o.id; document.getElementById('pizBuscarOrden').value=`Orden #${o.id} — ${o.cliente}`; document.getElementById('pizNroOrden').textContent=o.id; document.getElementById('pizFechaRec').value=o.fecha.replace(' ',' / '); document.getElementById('pizVehiculo').textContent=o.vehiculo; document.getElementById('pizServicio').textContent=o.servicio; document.getElementById('pizCliente').textContent=o.cliente; document.getElementById('pizPlaca').textContent=o.placa; document.getElementById('pizTecnico').textContent=o.tecnico; document.getElementById('pizInfoOrden').classList.add('show'); document.getElementById('pizSugerencias').style.display='none';
+}
+function tpPizarraEditar(rid){
+  const r=tpPizFullRows().find(x=>x.rid==rid); if(!r)return; tpPizarraNuevo(); document.getElementById('pizModalTitulo').innerHTML='<i class="bi bi-calendar-check me-2"></i>Editar registro'; document.getElementById('pizEditId').value=rid; tpPizarraSeleccionar(r.id); document.getElementById('pizHoraEntrega').value=(r.entrega||'').substring(11,16); document.getElementById('pizFecha').value=(r.fecha||'').substring(0,10); document.getElementById('pizTarea').value=r.tarea||''; document.getElementById('pizColor').value=r.color||'AZUL'; document.getElementById('pizExigencia').value=String(r.exigencia||1); document.getElementById('pizCantEtiq').value=r.etiquetas||1; document.getElementById('pizBtnEliminar').style.display='inline-flex';
+}
+function tpPizarraGuardar(){
+  const idOrden=parseInt(document.getElementById('pizOrdenId').value||0); if(!idOrden){alert('Selecciona una orden de trabajo');return}
+  const edit=parseInt(document.getElementById('pizEditId').value||0); const fecha=document.getElementById('pizFecha').value||'2026-06-04'; const hora=document.getElementById('pizHoraEntrega').value; const obj={rid:edit||Date.now(),id:idOrden,entrega:hora?`${fecha} ${hora}`:'',tarea:document.getElementById('pizTarea').value||'Tarea programada',color:document.getElementById('pizColor').value,exigencia:parseInt(document.getElementById('pizExigencia').value||1),etiquetas:parseInt(document.getElementById('pizCantEtiq').value||1)};
+  if(edit){tpPizarraRegistros=tpPizarraRegistros.map(r=>r.rid==edit?obj:r)} else tpPizarraRegistros.unshift(obj); tpPizarraCerrar(); tpPizarraRender(); alert('Registro guardado en demo visual.');
+}
+function tpPizarraEliminar(){const rid=parseInt(document.getElementById('pizEditId').value||0); if(rid&&confirm('¿Eliminar este registro de pizarra?')){tpPizarraRegistros=tpPizarraRegistros.filter(r=>r.rid!=rid);tpPizarraCerrar();tpPizarraRender();}}
+function tpPizarraImprimirEtiqueta(){const id=document.getElementById('pizOrdenId').value; if(!id){alert('Selecciona una orden primero');return} alert('Demo: aquí se imprimiría la etiqueta de la OT #'+id);}
+function tpPizarraWhatsApp(rid){const r=tpPizFullRows().find(x=>x.rid==rid); if(!r)return; alert('Mensaje WhatsApp sugerido:\n\nHola '+r.cliente+', su vehículo '+r.vehiculo+' está en estado: '+r.estado+'. Próxima entrega: '+(r.entrega?tpFechaCorta(r.entrega)+' '+tpHora(r.entrega).replace(/<[^>]+>/g,''):'por confirmar')+'.');}
+setTimeout(tpPizarraRender,80);
 </script>
 </body>
 </html>
