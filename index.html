@@ -641,6 +641,14 @@ body{
 @media(max-width:520px){.pv-stats{grid-template-columns:1fr 1fr}.pv-actions{grid-template-columns:1fr}.pv-card-actions{grid-template-columns:1fr}.pv-stat b{font-size:20px}}
 </style>
 
+
+<style>
+/* ===== MÓDULO MODELOS DE VEHÍCULOS: estilos aislados ===== */
+.modelos-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;background:linear-gradient(135deg,#ffffff,#f8fbff);border:1px solid #dbeafe;border-radius:22px;padding:20px;box-shadow:0 10px 26px rgba(15,23,42,.05);margin-bottom:16px}
+.modelos-head h4{margin:0;color:#0f172a;font-weight:900}.modelos-head p{margin:4px 0 0;color:#64748b}.modelos-actions{display:flex;gap:9px;flex-wrap:wrap;justify-content:flex-end}.modelos-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}.modelo-stat{background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:15px;box-shadow:0 8px 18px rgba(15,23,42,.04);display:flex;gap:12px;align-items:center}.modelo-stat i{width:42px;height:42px;border-radius:14px;background:#eff6ff;color:#2563eb;display:grid;place-items:center;font-size:20px}.modelo-stat small{display:block;color:#64748b;font-weight:900;text-transform:uppercase;font-size:10px;letter-spacing:.35px}.modelo-stat b{font-size:22px;color:#0f172a;line-height:1}.modelos-filter{background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:15px;margin-bottom:14px;box-shadow:0 8px 18px rgba(15,23,42,.04)}.modelos-table-wrap{background:#fff;border:1px solid #e2e8f0;border-radius:18px;box-shadow:0 8px 20px rgba(15,23,42,.05)}.modelos-table{min-width:1050px}.modelos-table td{font-size:12px}.modelo-actions-row{display:flex;gap:5px;flex-wrap:nowrap}.modelo-actions-row .btn{padding:5px 8px;border-radius:9px}.modelos-mobile{display:none}.modelo-mobile-card{background:white;border:1px solid #e2e8f0;border-radius:18px;padding:15px;box-shadow:0 8px 20px rgba(15,23,42,.06)}.modelo-mobile-top{display:flex;justify-content:space-between;gap:10px;margin-bottom:10px}.modelo-mobile-top b{font-size:16px;color:#0f172a}.modelo-line{display:flex;justify-content:space-between;gap:12px;border-bottom:1px dashed #e2e8f0;padding:7px 0;font-size:12px}.modelo-line span:first-child{font-weight:900;color:#64748b}.modelo-line span:last-child{text-align:right;color:#334155;font-weight:700}.modelo-mobile-actions{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}.modelo-mobile-actions .btn{font-size:12px;border-radius:12px;font-weight:800;padding:8px 5px}.modelo-modal-backdrop{display:none;position:fixed;inset:0;background:rgba(15,23,42,.58);z-index:9999;padding:18px;overflow:auto}.modelo-modal-backdrop.show{display:flex;align-items:flex-start;justify-content:center}.modelo-modal{width:min(880px,100%);background:#fff;border-radius:22px;overflow:hidden;margin-top:24px;box-shadow:0 25px 70px rgba(15,23,42,.28)}.modelo-modal-head{background:#0f172a;color:#fff;padding:18px 22px;display:flex;justify-content:space-between;align-items:center}.modelo-modal-head h5{margin:0;font-weight:900}.modelo-modal-head button{border:0;background:rgba(255,255,255,.12);color:white;width:38px;height:38px;border-radius:12px}.modelo-modal-body{padding:22px}.modelo-modal-foot{background:#f8fafc;border-top:1px solid #e2e8f0;padding:16px 22px;display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+@media(max-width:900px){.modelos-head{flex-direction:column;padding:16px;border-radius:20px}.modelos-actions{width:100%;display:grid;grid-template-columns:1fr 1fr}.modelos-actions .btn{width:100%}.modelos-stats{grid-template-columns:repeat(2,1fr)}.modelos-table-wrap{display:none!important}.modelos-mobile{display:grid;gap:12px}.modelos-filter .btn{width:100%}.modelo-modal{margin-top:8px;border-radius:18px}.modelo-modal-body{padding:16px}.modelo-modal-foot{display:grid;grid-template-columns:1fr 1fr}.modelo-stat{padding:12px}.modelo-stat b{font-size:19px}}
+@media(max-width:520px){.modelos-stats{grid-template-columns:1fr}.modelos-actions,.modelo-mobile-actions{grid-template-columns:1fr}.modelo-modal-foot{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 <div class="mobile-backdrop" id="mobileBackdrop" onclick="toggleMenu(false)"></div>
@@ -1303,7 +1311,7 @@ const titles={
  reporte_ingresos:['Ingresos / Egresos','Movimientos financieros del taller'],
  tipos_vehículo:['Tipos de Servicio','Catálogo técnico de tipos de vehículo'],
  marcas:['Marcas','Mantenimiento de marcas'],
- modelos:['Modelos','Mantenimiento de modelos por marca'],
+ modelos:['Modelos de Vehículos','Catálogo de modelos asociados a marcas, años y tipo de vehículo'],
  vehículoes:['Vehículoes','Base técnica de vehículos y datos asociados'],
  articulos:['Artículos','Categorías de artículos e insumos'],
  técnicos:['Técnicos operativos','Personal operativo por departamento'],
@@ -1604,9 +1612,202 @@ simpleModule('marcas','Marcas','Catálogo de marcas de vehículos y maquinaria.'
  ['73','AUDI','<button class="btn btn-warning btn-sm">Editar</button> <button class="btn btn-danger btn-sm">Eliminar</button>']
 ],'Nuevo');
 
-simpleModule('modelos','Modelos','Modelos asociados a marcas.',['ID','Descripción','Acciones'],[
- ['—','Sin resultados','—']
-],'Nuevo');
+
+/* ===== MÓDULO MODELOS DE VEHÍCULOS TALLERPRO ===== */
+const tpMarcasModelo = ['Toyota','Chevrolet','Nissan','Kia','Hyundai','Mazda','Ford','Volkswagen','Suzuki','Renault','Mitsubishi','Honda'];
+const tpTiposModelo = ['Automóvil','Camioneta','SUV','Van','Camión liviano','Moto','Maquinaria'];
+let tpModeloEditId = null;
+let tpModelosVehiculo = [
+  {id:1, marca:'Toyota', modelo:'Hilux', anioInicio:2016, anioFin:2026, tipo:'Camioneta', motor:'2.4 / 2.8 diésel', estado:'Activo'},
+  {id:2, marca:'Toyota', modelo:'Corolla', anioInicio:2014, anioFin:2026, tipo:'Automóvil', motor:'1.8 / 2.0 gasolina', estado:'Activo'},
+  {id:3, marca:'Chevrolet', modelo:'D-Max', anioInicio:2015, anioFin:2026, tipo:'Camioneta', motor:'2.4 / 3.0 diésel', estado:'Activo'},
+  {id:4, marca:'Chevrolet', modelo:'Sail', anioInicio:2012, anioFin:2023, tipo:'Automóvil', motor:'1.4 / 1.5 gasolina', estado:'Activo'},
+  {id:5, marca:'Nissan', modelo:'Frontier', anioInicio:2016, anioFin:2026, tipo:'Camioneta', motor:'2.5 diésel', estado:'Activo'},
+  {id:6, marca:'Kia', modelo:'Sportage', anioInicio:2011, anioFin:2026, tipo:'SUV', motor:'2.0 gasolina / diésel', estado:'Activo'},
+  {id:7, marca:'Hyundai', modelo:'Tucson', anioInicio:2010, anioFin:2026, tipo:'SUV', motor:'2.0 gasolina / diésel', estado:'Activo'},
+  {id:8, marca:'Mazda', modelo:'BT-50', anioInicio:2012, anioFin:2024, tipo:'Camioneta', motor:'2.2 / 3.2 diésel', estado:'Activo'}
+];
+
+function modeloEstadoBadge(estado){
+  return estado === 'Activo' ? '<span class="badgex b-ok">Activo</span>' : '<span class="badgex b-gray">Inactivo</span>';
+}
+function renderModelosVehiculo(){
+  const q = (document.getElementById('modeloBuscar')?.value || '').toLowerCase().trim();
+  const marca = document.getElementById('modeloFiltroMarca')?.value || '';
+  const tipo = document.getElementById('modeloFiltroTipo')?.value || '';
+  const rows = tpModelosVehiculo.filter(r=>{
+    const txt = `${r.marca} ${r.modelo} ${r.tipo} ${r.motor} ${r.estado}`.toLowerCase();
+    return (!q || txt.includes(q)) && (!marca || r.marca===marca) && (!tipo || r.tipo===tipo);
+  });
+  const tbody = document.getElementById('modeloVehiculoTbody');
+  const mobile = document.getElementById('modeloVehiculoMobile');
+  const count = document.getElementById('modeloVehiculoCount');
+  if(count) count.textContent = `${rows.length} modelos`;
+  if(tbody){
+    tbody.innerHTML = rows.length ? rows.map(r=>`
+      <tr>
+        <td class="ps-3 text-muted">${r.id}</td>
+        <td><b class="text-dark">${r.marca}</b><div class="subtext">Marca del vehículo</div></td>
+        <td><span class="fw-bold text-dark">${r.modelo}</span><div class="subtext">${r.motor}</div></td>
+        <td>${r.anioInicio} - ${r.anioFin || 'Actual'}</td>
+        <td><span class="badgex b-rec">${r.tipo}</span></td>
+        <td>${modeloEstadoBadge(r.estado)}</td>
+        <td>
+          <div class="modelo-actions-row">
+            <button class="btn btn-sm btn-warning text-dark" onclick="abrirModeloVehiculo(${r.id})"><i class="bi bi-pencil"></i></button>
+            <button class="btn btn-sm btn-danger" onclick="eliminarModeloVehiculo(${r.id})"><i class="bi bi-trash"></i></button>
+          </div>
+        </td>
+      </tr>`).join('') : '<tr><td colspan="7" class="text-center py-4 text-muted">Sin resultados</td></tr>';
+  }
+  if(mobile){
+    mobile.innerHTML = rows.length ? rows.map(r=>`
+      <div class="modelo-mobile-card">
+        <div class="modelo-mobile-top">
+          <div><b>${r.marca} ${r.modelo}</b><div class="subtext">${r.motor}</div></div>
+          ${modeloEstadoBadge(r.estado)}
+        </div>
+        <div class="modelo-line"><span>ID</span><span>${r.id}</span></div>
+        <div class="modelo-line"><span>Marca</span><span>${r.marca}</span></div>
+        <div class="modelo-line"><span>Modelo</span><span>${r.modelo}</span></div>
+        <div class="modelo-line"><span>Años</span><span>${r.anioInicio} - ${r.anioFin || 'Actual'}</span></div>
+        <div class="modelo-line"><span>Tipo</span><span>${r.tipo}</span></div>
+        <div class="modelo-mobile-actions">
+          <button class="btn btn-warning text-dark" onclick="abrirModeloVehiculo(${r.id})"><i class="bi bi-pencil"></i> Editar</button>
+          <button class="btn btn-danger" onclick="eliminarModeloVehiculo(${r.id})"><i class="bi bi-trash"></i> Eliminar</button>
+        </div>
+      </div>`).join('') : '<div class="modelo-mobile-card text-center text-muted">Sin resultados</div>';
+  }
+}
+function llenarSelectModelos(){
+  const marcaSel = document.getElementById('modeloMarca');
+  const filtroMarca = document.getElementById('modeloFiltroMarca');
+  const tipoSel = document.getElementById('modeloTipo');
+  const filtroTipo = document.getElementById('modeloFiltroTipo');
+  if(marcaSel) marcaSel.innerHTML = '<option value="">Seleccionar marca</option>' + tpMarcasModelo.map(m=>`<option>${m}</option>`).join('');
+  if(filtroMarca) filtroMarca.innerHTML = '<option value="">Todas las marcas</option>' + tpMarcasModelo.map(m=>`<option>${m}</option>`).join('');
+  if(tipoSel) tipoSel.innerHTML = '<option value="">Seleccionar tipo</option>' + tpTiposModelo.map(t=>`<option>${t}</option>`).join('');
+  if(filtroTipo) filtroTipo.innerHTML = '<option value="">Todos los tipos</option>' + tpTiposModelo.map(t=>`<option>${t}</option>`).join('');
+}
+function abrirModeloVehiculo(id=null){
+  tpModeloEditId = id;
+  const item = id ? tpModelosVehiculo.find(r=>r.id===id) : null;
+  document.getElementById('modeloModalTitulo').textContent = item ? 'Editar modelo de vehículo' : 'Nuevo modelo de vehículo';
+  document.getElementById('modeloId').value = item?.id || '';
+  document.getElementById('modeloMarca').value = item?.marca || '';
+  document.getElementById('modeloNombre').value = item?.modelo || '';
+  document.getElementById('modeloAnioInicio').value = item?.anioInicio || '';
+  document.getElementById('modeloAnioFin').value = item?.anioFin || '';
+  document.getElementById('modeloTipo').value = item?.tipo || '';
+  document.getElementById('modeloMotor').value = item?.motor || '';
+  document.getElementById('modeloEstado').value = item?.estado || 'Activo';
+  document.getElementById('modeloModal').classList.add('show');
+}
+function cerrarModeloVehiculo(){
+  document.getElementById('modeloModal').classList.remove('show');
+  tpModeloEditId = null;
+}
+function guardarModeloVehiculo(){
+  const marca = document.getElementById('modeloMarca').value.trim();
+  const modelo = document.getElementById('modeloNombre').value.trim();
+  const tipo = document.getElementById('modeloTipo').value.trim();
+  if(!marca || !modelo || !tipo){ alert('Marca, modelo y tipo son obligatorios.'); return; }
+  const data = {
+    id: tpModeloEditId || (Math.max(0,...tpModelosVehiculo.map(r=>r.id))+1),
+    marca,
+    modelo,
+    anioInicio: document.getElementById('modeloAnioInicio').value || '—',
+    anioFin: document.getElementById('modeloAnioFin').value || 'Actual',
+    tipo,
+    motor: document.getElementById('modeloMotor').value.trim() || 'No especificado',
+    estado: document.getElementById('modeloEstado').value
+  };
+  if(tpModeloEditId){
+    tpModelosVehiculo = tpModelosVehiculo.map(r=>r.id===tpModeloEditId ? data : r);
+  }else{
+    tpModelosVehiculo.unshift(data);
+  }
+  cerrarModeloVehiculo();
+  renderModelosVehiculo();
+}
+function eliminarModeloVehiculo(id){
+  if(!confirm('¿Eliminar este modelo de vehículo?')) return;
+  tpModelosVehiculo = tpModelosVehiculo.filter(r=>r.id!==id);
+  renderModelosVehiculo();
+}
+function exportarModelosVehiculo(){
+  const header = ['ID','Marca','Modelo','Año inicio','Año fin','Tipo','Motor','Estado'];
+  const lines = tpModelosVehiculo.map(r=>[r.id,r.marca,r.modelo,r.anioInicio,r.anioFin,r.tipo,r.motor,r.estado]);
+  const csv = [header,...lines].map(row=>row.map(v=>`"${String(v).replaceAll('"','""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'modelos_vehiculos_tallerpro.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function renderModelosVehiculoModule(){
+  const screen = document.getElementById('modelos');
+  if(!screen) return;
+  screen.innerHTML = `
+  <div class="mobile-quick-title"><div><b>Modelos de Vehículos</b><br><span>Catálogo técnico por marca, año y tipo</span></div><i class="bi bi-bookmarks"></i></div>
+  <div class="modelos-head">
+    <div>
+      <h4><i class="bi bi-bookmarks me-2 text-primary"></i>Modelos de Vehículos</h4>
+      <p>Administra modelos asociados a marcas para clientes, vehículos y órdenes de trabajo.</p>
+    </div>
+    <div class="modelos-actions">
+      <button class="btn btn-success" onclick="renderModelosVehiculo()"><i class="bi bi-arrow-clockwise me-1"></i>Actualizar</button>
+      <button class="btn btn-blue" onclick="abrirModeloVehiculo()"><i class="bi bi-plus-circle me-1"></i>Nuevo modelo</button>
+      <button class="btn btn-soft" onclick="exportarModelosVehiculo()"><i class="bi bi-download me-1"></i>CSV</button>
+    </div>
+  </div>
+  <div class="modelos-stats">
+    <div class="modelo-stat"><i class="bi bi-car-front"></i><div><small>Total modelos</small><b>${tpModelosVehiculo.length}</b></div></div>
+    <div class="modelo-stat"><i class="bi bi-bookmark-check"></i><div><small>Marcas</small><b>${new Set(tpModelosVehiculo.map(r=>r.marca)).size}</b></div></div>
+    <div class="modelo-stat"><i class="bi bi-truck-front"></i><div><small>Tipos</small><b>${new Set(tpModelosVehiculo.map(r=>r.tipo)).size}</b></div></div>
+    <div class="modelo-stat"><i class="bi bi-check2-circle"></i><div><small>Activos</small><b>${tpModelosVehiculo.filter(r=>r.estado==='Activo').length}</b></div></div>
+  </div>
+  <div class="modelos-filter">
+    <div class="row g-2 align-items-end">
+      <div class="col-lg-4"><label class="form-label small fw-bold">Buscar</label><input id="modeloBuscar" class="form-control" placeholder="Buscar por marca, modelo o motor..." oninput="renderModelosVehiculo()"></div>
+      <div class="col-lg-3"><label class="form-label small fw-bold">Marca</label><select id="modeloFiltroMarca" class="form-select" onchange="renderModelosVehiculo()"></select></div>
+      <div class="col-lg-3"><label class="form-label small fw-bold">Tipo</label><select id="modeloFiltroTipo" class="form-select" onchange="renderModelosVehiculo()"></select></div>
+      <div class="col-lg-2 text-lg-end"><span class="badgex b-gray" id="modeloVehiculoCount">0 modelos</span></div>
+    </div>
+  </div>
+  <div class="modelos-table-wrap table-responsive">
+    <table class="table table-modern modelos-table">
+      <thead><tr><th class="ps-3">ID</th><th>Marca</th><th>Modelo / Motor</th><th>Años</th><th>Tipo</th><th>Estado</th><th>Acciones</th></tr></thead>
+      <tbody id="modeloVehiculoTbody"></tbody>
+    </table>
+  </div>
+  <div class="modelos-mobile" id="modeloVehiculoMobile"></div>
+  <div class="modelo-modal-backdrop" id="modeloModal">
+    <div class="modelo-modal">
+      <div class="modelo-modal-head"><h5 id="modeloModalTitulo">Nuevo modelo de vehículo</h5><button onclick="cerrarModeloVehiculo()"><i class="bi bi-x-lg"></i></button></div>
+      <div class="modelo-modal-body">
+        <input type="hidden" id="modeloId">
+        <div class="row g-3">
+          <div class="col-md-6"><label class="form-label small fw-bold">Marca *</label><select id="modeloMarca" class="form-select"></select></div>
+          <div class="col-md-6"><label class="form-label small fw-bold">Modelo *</label><input id="modeloNombre" class="form-control" placeholder="Ej: Hilux, D-Max, Sportage"></div>
+          <div class="col-md-3"><label class="form-label small fw-bold">Año inicio</label><input id="modeloAnioInicio" type="number" class="form-control" placeholder="2016"></div>
+          <div class="col-md-3"><label class="form-label small fw-bold">Año fin</label><input id="modeloAnioFin" type="number" class="form-control" placeholder="2026"></div>
+          <div class="col-md-3"><label class="form-label small fw-bold">Tipo *</label><select id="modeloTipo" class="form-select"></select></div>
+          <div class="col-md-3"><label class="form-label small fw-bold">Estado</label><select id="modeloEstado" class="form-select"><option>Activo</option><option>Inactivo</option></select></div>
+          <div class="col-12"><label class="form-label small fw-bold">Motor / referencia técnica</label><input id="modeloMotor" class="form-control" placeholder="Ej: 2.4 / 2.8 diésel, 1.8 gasolina"></div>
+        </div>
+      </div>
+      <div class="modelo-modal-foot">
+        <button class="btn btn-outline-secondary" onclick="cerrarModeloVehiculo()">Cerrar</button>
+        <button class="btn btn-warning text-dark fw-bold" onclick="guardarModeloVehiculo()"><i class="bi bi-save me-1"></i>Guardar</button>
+      </div>
+    </div>
+  </div>`;
+  llenarSelectModelos();
+  renderModelosVehiculo();
+}
+renderModelosVehiculoModule();
 
 simpleModule('vehículoes','Vehículoes','Base técnica de vehículoes registrados.',['ID','Vehículo','Marca','Tipo Vehículo','Acción'],[
  ['469','AGRÍCOLA DEUTZ F4 912 4 CILINDRO','DEUTZ','DIÉSEL','<button class="btn btn-info btn-sm text-white">Datos Técnicos</button>'],
