@@ -642,16 +642,6 @@ body{
 </style>
 
 
-
-
-<style>
-/* ===== MÓDULO MARCAS DE VEHÍCULOS: estilos aislados ===== */
-.marcas-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;background:linear-gradient(135deg,#ffffff,#f8fbff);border:1px solid #dbeafe;border-radius:22px;padding:20px;box-shadow:0 10px 26px rgba(15,23,42,.05);margin-bottom:16px}
-.marcas-head h4{margin:0;color:#0f172a;font-weight:900}.marcas-head p{margin:4px 0 0;color:#64748b}.marcas-actions{display:flex;gap:9px;flex-wrap:wrap;justify-content:flex-end}.marcas-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}.marca-stat{background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:15px;box-shadow:0 8px 18px rgba(15,23,42,.04);display:flex;gap:12px;align-items:center}.marca-stat i{width:42px;height:42px;border-radius:14px;background:#eff6ff;color:#2563eb;display:grid;place-items:center;font-size:20px}.marca-stat small{display:block;color:#64748b;font-weight:900;text-transform:uppercase;font-size:10px;letter-spacing:.35px}.marca-stat b{font-size:22px;color:#0f172a;line-height:1}.marcas-filter{background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:15px;margin-bottom:14px;box-shadow:0 8px 18px rgba(15,23,42,.04)}.marcas-table-wrap{background:#fff;border:1px solid #e2e8f0;border-radius:18px;box-shadow:0 8px 20px rgba(15,23,42,.05)}.marcas-table{min-width:980px}.marcas-table td{font-size:12px}.marca-logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,#38bdf8,#2563eb);display:grid;place-items:center;color:white;font-weight:950;letter-spacing:.5px}.marca-name{display:flex;align-items:center;gap:10px}.marca-name b{color:#0f172a}.marca-name small{display:block;color:#64748b}.marca-actions-row{display:flex;gap:5px;flex-wrap:nowrap}.marca-actions-row .btn{padding:5px 8px;border-radius:9px}.marcas-mobile{display:none}.marca-mobile-card{background:white;border:1px solid #e2e8f0;border-radius:18px;padding:15px;box-shadow:0 8px 20px rgba(15,23,42,.06)}.marca-mobile-top{display:flex;justify-content:space-between;gap:10px;margin-bottom:10px}.marca-mobile-person{display:flex;align-items:center;gap:10px}.marca-line{display:flex;justify-content:space-between;gap:12px;border-bottom:1px dashed #e2e8f0;padding:7px 0;font-size:12px}.marca-line span:first-child{font-weight:900;color:#64748b}.marca-line span:last-child{text-align:right;color:#334155;font-weight:700}.marca-mobile-actions{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}.marca-mobile-actions .btn{font-size:12px;border-radius:12px;font-weight:800;padding:8px 5px}.marca-modal-backdrop{display:none;position:fixed;inset:0;background:rgba(15,23,42,.58);z-index:9999;padding:18px;overflow:auto}.marca-modal-backdrop.show{display:flex;align-items:flex-start;justify-content:center}.marca-modal{width:min(820px,100%);background:#fff;border-radius:22px;overflow:hidden;margin-top:24px;box-shadow:0 25px 70px rgba(15,23,42,.28)}.marca-modal-head{background:#0f172a;color:#fff;padding:18px 22px;display:flex;justify-content:space-between;align-items:center}.marca-modal-head h5{margin:0;font-weight:900}.marca-modal-head button{border:0;background:rgba(255,255,255,.12);color:white;width:38px;height:38px;border-radius:12px}.marca-modal-body{padding:22px}.marca-modal-foot{background:#f8fafc;border-top:1px solid #e2e8f0;padding:16px 22px;display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
-@media(max-width:900px){.marcas-head{flex-direction:column;padding:16px;border-radius:20px}.marcas-actions{width:100%;display:grid;grid-template-columns:1fr 1fr}.marcas-actions .btn{width:100%}.marcas-stats{grid-template-columns:repeat(2,1fr)}.marcas-table-wrap{display:none!important}.marcas-mobile{display:grid;gap:12px}.marcas-filter .btn{width:100%}.marca-modal{margin-top:8px;border-radius:18px}.marca-modal-body{padding:16px}.marca-modal-foot{display:grid;grid-template-columns:1fr 1fr}.marca-stat{padding:12px}.marca-stat b{font-size:19px}}
-@media(max-width:520px){.marcas-stats{grid-template-columns:1fr}.marcas-actions,.marca-mobile-actions{grid-template-columns:1fr}.marca-modal-foot{grid-template-columns:1fr}}
-</style>
-
 <style>
 /* ===== MÓDULO MODELOS DE VEHÍCULOS: estilos aislados ===== */
 .modelos-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;background:linear-gradient(135deg,#ffffff,#f8fbff);border:1px solid #dbeafe;border-radius:22px;padding:20px;box-shadow:0 10px 26px rgba(15,23,42,.05);margin-bottom:16px}
@@ -1340,7 +1330,6 @@ function showScreen(id,el){
   toggleMenu(false);
   syncBottom(id);
   if(id==='clientes' && typeof renderClientesPro==='function') setTimeout(renderClientesPro,20);
-  if(id==='marcas' && typeof renderMarcasVehiculoModule==='function') setTimeout(renderMarcasVehiculoModule,20);
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -1616,123 +1605,13 @@ simpleModule('tipos_vehículo','Tipos de Servicio','Clasificación técnica de v
  ['546','GASOLINA 1','<button class="btn btn-warning btn-sm">Editar</button> <button class="btn btn-danger btn-sm">Eliminar</button>']
 ],'Nuevo');
 
+simpleModule('marcas','Marcas','Catálogo de marcas de vehículos y maquinaria.',['ID','Descripción','Acciones'],[
+ ['99','MAN','<button class="btn btn-warning btn-sm">Editar</button> <button class="btn btn-danger btn-sm">Eliminar</button>'],
+ ['98','HOLLAND','<button class="btn btn-warning btn-sm">Editar</button> <button class="btn btn-danger btn-sm">Eliminar</button>'],
+ ['97','CHRYSLER','<button class="btn btn-warning btn-sm">Editar</button> <button class="btn btn-danger btn-sm">Eliminar</button>'],
+ ['73','AUDI','<button class="btn btn-warning btn-sm">Editar</button> <button class="btn btn-danger btn-sm">Eliminar</button>']
+],'Nuevo');
 
-/* ===== MÓDULO MARCAS DE VEHÍCULOS TALLERPRO ===== */
-const tpPaisesMarca = ['Japón','Estados Unidos','Corea del Sur','Alemania','Francia','Italia','China','Reino Unido','Suecia','India','Otro'];
-let marcaVehiculoEditId = null;
-let marcasVehiculoRows = [
-  {id:1, marca:'Toyota', pais:'Japón', estado:'Activo', obs:'Marca frecuente en camionetas, taxis y vehículos particulares.'},
-  {id:2, marca:'Chevrolet', pais:'Estados Unidos', estado:'Activo', obs:'Alta presencia en flotas, camionetas y vehículos de trabajo.'},
-  {id:3, marca:'Nissan', pais:'Japón', estado:'Activo', obs:'Camionetas, SUV y autos de uso comercial y particular.'},
-  {id:4, marca:'Kia', pais:'Corea del Sur', estado:'Activo', obs:'Vehículos livianos, SUV y flotas urbanas.'},
-  {id:5, marca:'Hyundai', pais:'Corea del Sur', estado:'Activo', obs:'Modelos livianos, SUV y vehículos de trabajo.'},
-  {id:6, marca:'Mazda', pais:'Japón', estado:'Activo', obs:'Autos particulares, camionetas y SUV.'},
-  {id:7, marca:'Ford', pais:'Estados Unidos', estado:'Activo', obs:'Camionetas, SUV y vehículos comerciales.'},
-  {id:8, marca:'Volkswagen', pais:'Alemania', estado:'Activo', obs:'Vehículos livianos y comerciales.'},
-  {id:9, marca:'Mitsubishi', pais:'Japón', estado:'Activo', obs:'Camionetas, SUV y trabajo pesado liviano.'},
-  {id:10, marca:'Renault', pais:'Francia', estado:'Activo', obs:'Vehículos livianos y utilitarios.'}
-];
-function marcaInicial(nombre){return (nombre||'MV').trim().split(/\s+/).map(p=>p[0]).join('').slice(0,2).toUpperCase() || 'MV'}
-function marcaEstadoBadge(estado){return estado==='Activo'?'<span class="badgex b-ok">Activo</span>':'<span class="badgex b-gray">Inactivo</span>'}
-function marcaFiltradas(){
-  const q=(document.getElementById('marcaBuscar')?.value||'').toLowerCase().trim();
-  const pais=document.getElementById('marcaFiltroPais')?.value||'';
-  const estado=document.getElementById('marcaFiltroEstado')?.value||'';
-  return marcasVehiculoRows.filter(r=>{
-    const txt=`${r.id} ${r.marca} ${r.pais} ${r.estado} ${r.obs}`.toLowerCase();
-    return (!q||txt.includes(q)) && (!pais||r.pais===pais) && (!estado||r.estado===estado);
-  });
-}
-function renderMarcasVehiculo(){
-  const rows=marcaFiltradas();
-  const tbody=document.getElementById('marcaVehiculoTbody');
-  const mobile=document.getElementById('marcaVehiculoMobile');
-  const count=document.getElementById('marcaVehiculoCount');
-  if(count) count.textContent=`${rows.length} marcas`;
-  if(tbody){
-    tbody.innerHTML=rows.length?rows.map(r=>`
-      <tr>
-        <td class="ps-3 text-muted">${r.id}</td>
-        <td><div class="marca-name"><div class="marca-logo">${marcaInicial(r.marca)}</div><div><b>${r.marca}</b><small>Marca de vehículo</small></div></div></td>
-        <td>${r.pais}</td>
-        <td>${marcaEstadoBadge(r.estado)}</td>
-        <td class="text-muted">${r.obs||'—'}</td>
-        <td><div class="marca-actions-row"><button class="btn btn-sm btn-warning text-dark" onclick="abrirMarcaVehiculo(${r.id})"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-danger" onclick="eliminarMarcaVehiculo(${r.id})"><i class="bi bi-trash"></i></button></div></td>
-      </tr>`).join(''):'<tr><td colspan="6" class="text-center py-4 text-muted">Sin resultados</td></tr>';
-  }
-  if(mobile){
-    mobile.innerHTML=rows.length?rows.map(r=>`
-      <div class="marca-mobile-card">
-        <div class="marca-mobile-top"><div class="marca-mobile-person"><div class="marca-logo">${marcaInicial(r.marca)}</div><div><b>${r.marca}</b><div class="subtext">ID ${r.id}</div></div></div>${marcaEstadoBadge(r.estado)}</div>
-        <div class="marca-line"><span>País de origen</span><span>${r.pais}</span></div>
-        <div class="marca-line"><span>Observaciones</span><span>${r.obs||'—'}</span></div>
-        <div class="marca-mobile-actions"><button class="btn btn-outline-primary" onclick="abrirMarcaVehiculo(${r.id})">Editar</button><button class="btn btn-outline-danger" onclick="eliminarMarcaVehiculo(${r.id})">Eliminar</button></div>
-      </div>`).join(''):'<div class="marca-mobile-card text-center text-muted">Sin resultados</div>';
-  }
-}
-function llenarSelectMarcas(){
-  const filtroPais=document.getElementById('marcaFiltroPais');
-  const pais=document.getElementById('marcaPais');
-  if(filtroPais) filtroPais.innerHTML='<option value="">Todos los países</option>'+tpPaisesMarca.map(p=>`<option>${p}</option>`).join('');
-  if(pais) pais.innerHTML=tpPaisesMarca.map(p=>`<option>${p}</option>`).join('');
-}
-function abrirMarcaVehiculo(id){
-  if(!document.getElementById('marcaModal') || !document.getElementById('marcaModalTitulo')){
-    if(typeof renderMarcasVehiculoModule==='function') renderMarcasVehiculoModule();
-  }
-  const r=id?marcasVehiculoRows.find(x=>x.id===id):null;
-  marcaVehiculoEditId=id||null;
-  const tituloMarca=document.getElementById('marcaModalTitulo');
-  if(!tituloMarca){alert('No se encontró el modal de Marcas. Recargue el módulo Marcas.');return;}
-  tituloMarca.textContent=r?'Editar marca de vehículo':'Nueva marca de vehículo';
-  document.getElementById('marcaId').value=r?.id||'';
-  document.getElementById('marcaNombre').value=r?.marca||'';
-  document.getElementById('marcaPais').value=r?.pais||'Japón';
-  document.getElementById('marcaEstado').value=r?.estado||'Activo';
-  document.getElementById('marcaObs').value=r?.obs||'';
-  document.getElementById('marcaModal').classList.add('show');
-}
-function cerrarMarcaVehiculo(){document.getElementById('marcaModal')?.classList.remove('show')}
-function guardarMarcaVehiculo(){
-  const marca=document.getElementById('marcaNombre').value.trim();
-  if(!marca){alert('La marca es requerida');document.getElementById('marcaNombre').focus();return}
-  const obj={id:marcaVehiculoEditId||Date.now(),marca,pais:document.getElementById('marcaPais').value,estado:document.getElementById('marcaEstado').value,obs:document.getElementById('marcaObs').value.trim()};
-  if(marcaVehiculoEditId){const i=marcasVehiculoRows.findIndex(x=>x.id===marcaVehiculoEditId);if(i>=0)marcasVehiculoRows[i]=obj}else{marcasVehiculoRows.unshift(obj)}
-  cerrarMarcaVehiculo();renderMarcasVehiculoModule();alert('Marca guardada en demo visual.');
-}
-function eliminarMarcaVehiculo(id){
-  const r=marcasVehiculoRows.find(x=>x.id===id);if(!r)return;
-  if(confirm(`¿Eliminar la marca ${r.marca}?`)){marcasVehiculoRows=marcasVehiculoRows.filter(x=>x.id!==id);renderMarcasVehiculoModule()}
-}
-function limpiarFiltroMarcas(){document.getElementById('marcaBuscar').value='';document.getElementById('marcaFiltroPais').value='';document.getElementById('marcaFiltroEstado').value='';renderMarcasVehiculo()}
-function exportarMarcasVehiculo(){
-  const header=['ID','Marca','Pais','Estado','Observaciones'];
-  const lines=marcaFiltradas().map(r=>[r.id,r.marca,r.pais,r.estado,r.obs]);
-  const csv=[header,...lines].map(row=>row.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='marcas_vehiculos_tallerpro.csv';a.click();URL.revokeObjectURL(a.href);
-}
-function renderMarcasVehiculoModule(){
-  const screen=document.getElementById('marcas');if(!screen)return;
-  screen.innerHTML=`
-  <div class="mobile-quick-title"><div><b>Marcas de Vehículos</b><br><span>Catálogo maestro de marcas</span></div><i class="bi bi-bookmark"></i></div>
-  <div class="marcas-head">
-    <div><h4><i class="bi bi-bookmark me-2 text-primary"></i>Marcas de Vehículos</h4><p>Administra marcas para relacionarlas con modelos, vehículos, clientes y órdenes de trabajo.</p></div>
-    <div class="marcas-actions"><button class="btn btn-success" onclick="renderMarcasVehiculo()"><i class="bi bi-arrow-clockwise me-1"></i>Actualizar</button><button type="button" class="btn btn-blue" onclick="abrirMarcaVehiculo()"><i class="bi bi-plus-circle me-1"></i>Nueva marca</button><button class="btn btn-soft" onclick="exportarMarcasVehiculo()"><i class="bi bi-download me-1"></i>CSV</button></div>
-  </div>
-  <div class="marcas-stats">
-    <div class="marca-stat"><i class="bi bi-bookmarks"></i><div><small>Total marcas</small><b>${marcasVehiculoRows.length}</b></div></div>
-    <div class="marca-stat"><i class="bi bi-globe-americas"></i><div><small>Países</small><b>${new Set(marcasVehiculoRows.map(r=>r.pais)).size}</b></div></div>
-    <div class="marca-stat"><i class="bi bi-check2-circle"></i><div><small>Activas</small><b>${marcasVehiculoRows.filter(r=>r.estado==='Activo').length}</b></div></div>
-    <div class="marca-stat"><i class="bi bi-diagram-3"></i><div><small>Uso futuro</small><b>Modelos</b></div></div>
-  </div>
-  <div class="marcas-filter"><div class="row g-2 align-items-end"><div class="col-lg-4"><label class="form-label small fw-bold">Buscar marca o país</label><input id="marcaBuscar" class="form-control" placeholder="Ej: Toyota, Japón, Chevrolet" oninput="renderMarcasVehiculo()"></div><div class="col-lg-3"><label class="form-label small fw-bold">País de origen</label><select id="marcaFiltroPais" class="form-select" onchange="renderMarcasVehiculo()"></select></div><div class="col-lg-3"><label class="form-label small fw-bold">Estado</label><select id="marcaFiltroEstado" class="form-select" onchange="renderMarcasVehiculo()"><option value="">Todos</option><option>Activo</option><option>Inactivo</option></select></div><div class="col-lg-2 d-flex gap-2"><button class="btn btn-blue flex-fill" onclick="renderMarcasVehiculo()"><i class="bi bi-search"></i></button><button class="btn btn-soft" onclick="limpiarFiltroMarcas()"><i class="bi bi-x-circle"></i></button></div></div><div class="mt-2"><span class="badgex b-gray" id="marcaVehiculoCount">0 marcas</span></div></div>
-  <div class="marcas-table-wrap table-responsive"><table class="table table-modern marcas-table"><thead><tr><th class="ps-3">ID</th><th>Marca</th><th>País de origen</th><th>Estado</th><th>Observaciones</th><th>Acciones</th></tr></thead><tbody id="marcaVehiculoTbody"></tbody></table></div>
-  <div class="marcas-mobile" id="marcaVehiculoMobile"></div>
-  <div class="marca-modal-backdrop" id="marcaModal"><div class="marca-modal"><div class="marca-modal-head"><h5 id="marcaModalTitulo">Nueva marca de vehículo</h5><button onclick="cerrarMarcaVehiculo()"><i class="bi bi-x-lg"></i></button></div><div class="marca-modal-body"><input type="hidden" id="marcaId"><div class="row g-3"><div class="col-md-6"><label class="form-label small fw-bold">Marca *</label><input id="marcaNombre" class="form-control" placeholder="Ej: Toyota"></div><div class="col-md-6"><label class="form-label small fw-bold">País de origen</label><select id="marcaPais" class="form-select"></select></div><div class="col-md-4"><label class="form-label small fw-bold">Estado</label><select id="marcaEstado" class="form-select"><option>Activo</option><option>Inactivo</option></select></div><div class="col-md-8"><label class="form-label small fw-bold">Logo / referencia visual</label><input class="form-control" placeholder="Opcional en demo visual" disabled></div><div class="col-12"><label class="form-label small fw-bold">Observaciones</label><textarea id="marcaObs" class="form-control" rows="3" placeholder="Notas internas para el taller"></textarea></div></div></div><div class="marca-modal-foot"><button type="button" class="btn btn-outline-secondary" onclick="cerrarMarcaVehiculo()">Cerrar</button><button type="button" class="btn btn-warning text-dark fw-bold" onclick="guardarMarcaVehiculo()"><i class="bi bi-save me-1"></i>Guardar</button></div></div></div>`;
-  llenarSelectMarcas();renderMarcasVehiculo();
-}
-renderMarcasVehiculoModule();
 
 /* ===== MÓDULO MODELOS DE VEHÍCULOS TALLERPRO ===== */
 const tpMarcasModelo = ['Toyota','Chevrolet','Nissan','Kia','Hyundai','Mazda','Ford','Volkswagen','Suzuki','Renault','Mitsubishi','Honda'];
@@ -2808,9 +2687,11 @@ function ccAbrirAbono(id){ccOrdenSeleccionada=ccData.find(o=>o.id===id)||ccData[
 function ccCerrarAbono(){document.getElementById('ccModalAbono').classList.remove('show')}
 function ccGuardarAbono(){const v=parseFloat(document.getElementById('ccAbonoMonto').value)||0;if(!ccOrdenSeleccionada||v<=0){alert('Ingrese un monto válido');return}ccOrdenSeleccionada.abonado=Math.min(ccOrdenSeleccionada.total,ccOrdenSeleccionada.abonado+v);ccAbonos.unshift({fecha:'2026-06-04 17:40',ot:ccOrdenSeleccionada.id,cliente:ccOrdenSeleccionada.cliente,placa:ccOrdenSeleccionada.placa,monto:v,forma:document.getElementById('ccAbonoForma').value,ref:document.getElementById('ccAbonoRef').value||'Registro manual',usuario:'Administrador'});ccCerrarAbono();ccRender();ccRenderAbonos();alert('Demo visual: abono registrado en pantalla')}
 function ccWhats(id){const o=ccData.find(x=>x.id===id);if(!o)return;const msg=`Hola ${o.cliente}, le recordamos el saldo pendiente de la OT #${o.id} (${o.vehiculo}, placa ${o.placa}): ${ccMoney(ccSaldo(o))}.`;window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank')}
-function ccExportarCSV(){const rows=ccFiltrados();const csv=['OT,Cliente,Telefono,Placa,Vehiculo,Tecnico,Total,Abonado,Saldo,Estado'].concat(rows.map(o=>[o.id,o.cliente,o.tel,o.placa,o.vehiculo,o.tecnico,o.total,o.abonado,ccSaldo(o),ccEstadoCta(o)].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(','))).join('\n');const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cuentas_por_cobrar_tallerpro.csv';a.click();URL.revokeObjectURL(a.href)}
+function ccExportarCSV(){const rows=ccFiltrados();const csv=['OT,Cliente,Telefono,Placa,Vehiculo,Tecnico,Total,Abonado,Saldo,Estado'].concat(rows.map(o=>[o.id,o.cliente,o.tel,o.placa,o.vehiculo,o.tecnico,o.total,o.abonado,ccSaldo(o),ccEstadoCta(o)].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(','))).join('
+');const blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cuentas_por_cobrar_tallerpro.csv';a.click();URL.revokeObjectURL(a.href)}
 document.addEventListener('DOMContentLoaded',()=>{ccRender();ccRenderAbonos()});
 </script>
 
 </body>
 </html>
+
