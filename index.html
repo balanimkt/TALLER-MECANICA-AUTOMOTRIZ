@@ -595,6 +595,11 @@ body{
 .piz-modal-backdrop{display:none;position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:9998;padding:18px;overflow:auto}.piz-modal-backdrop.show{display:flex;align-items:flex-start;justify-content:center}.piz-modal{width:min(820px,100%);background:#fff;border-radius:22px;box-shadow:0 25px 70px rgba(15,23,42,.28);margin-top:24px;overflow:hidden}.piz-modal-head{background:#0f172a;color:white;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;gap:12px}.piz-modal-head h5{margin:0;font-weight:900}.piz-close{border:0;background:rgba(255,255,255,.12);color:white;width:38px;height:38px;border-radius:12px;font-size:18px}.piz-modal-body{padding:22px}.piz-modal-foot{background:#f8fafc;border-top:1px solid #e2e8f0;padding:16px 22px;display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}.piz-order-number{background:#e8f5e9;color:#166534;border:2px solid #bbf7d0;border-radius:16px;font-size:34px;font-weight:950;text-align:center;padding:10px}.piz-info-box{display:none;border:1px solid #bfdbfe;background:#f8fbff;border-radius:16px;padding:14px;margin-top:12px}.piz-info-box.show{display:block}.piz-suggestions{display:none;position:absolute;left:0;right:0;top:100%;z-index:40;background:#fff;border:1px solid #dbe3ef;border-radius:14px;box-shadow:0 18px 35px rgba(15,23,42,.13);max-height:220px;overflow:auto}.piz-suggestions button{display:block;width:100%;border:0;background:#fff;text-align:left;padding:11px 13px;border-bottom:1px solid #f1f5f9}.piz-suggestions button:hover{background:#eff6ff}.piz-suggestions button:last-child{border-bottom:0}
 @media(max-width:900px){.piz-toolbar{align-items:flex-start}.piz-title,.piz-actions{width:100%}.piz-actions .btn,.piz-actions button{flex:1}.piz-toggle{width:100%;display:grid;grid-template-columns:1fr 1fr}.piz-stats{grid-template-columns:repeat(2,1fr)}.piz-grid{grid-template-columns:1fr}.piz-calendar-grid{grid-template-columns:1fr}.piz-modal-backdrop{padding:9px}.piz-modal{margin-top:8px;border-radius:18px}.piz-modal-body{padding:16px}.piz-modal-foot{padding:14px}.piz-card-actions{max-width:none}.piz-ot{font-size:21px}}
 
+
+/* ===== MÓDULO ÓRDENES TALLERPRO: escritorio + teléfono ===== */
+.ordenes-pro-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;background:linear-gradient(135deg,#ffffff,#f8fbff);border:1px solid #dbeafe;border-radius:22px;padding:20px;box-shadow:0 10px 26px rgba(15,23,42,.05)}
+.ordenes-pro-head h4{margin:0;color:#0f172a;font-weight:900}.ordenes-pro-head p{margin:3px 0 0;color:#64748b}.ordenes-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.ordenes-tabs .nav-link{font-weight:800;color:#64748b;border-radius:14px 14px 0 0}.ordenes-tabs .nav-link.active{color:#2563eb}.estado-filter-bar{display:flex;gap:8px;flex-wrap:wrap}.estado-filter-bar .btn{border-radius:999px;font-weight:800}.ordenes-panel{padding:16px}.tbl-ordenes-taller{min-width:1280px}.tbl-ordenes-taller td{font-size:12px}.vehiculo-cell b{display:block;color:#0f172a}.vehiculo-cell small{color:#64748b}.obs-mini{max-width:170px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#64748b}.action-grid{display:flex;gap:5px;flex-wrap:nowrap}.action-grid .btn{padding:4px 7px;border-radius:9px}.btn-edit-orange{background:#f97316;color:white;border:0}.btn-edit-orange:hover{background:#ea580c;color:white}.ordenes-footer{display:flex;justify-content:space-between;align-items:center}.orders-mobile-list{display:none}.order-mobile-card{background:white;border:1px solid #e2e8f0;border-radius:18px;padding:15px;box-shadow:0 8px 20px rgba(15,23,42,.06)}.order-mobile-top{display:flex;justify-content:space-between;gap:10px;margin-bottom:9px}.order-mobile-top b{font-size:16px;color:#0f172a}.order-line{display:flex;justify-content:space-between;gap:12px;border-bottom:1px dashed #e2e8f0;padding:7px 0;font-size:12px}.order-line span:first-child{font-weight:900;color:#64748b}.order-line span:last-child{text-align:right;color:#334155;font-weight:700}.order-mobile-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.order-mobile-actions .btn{font-size:12px;border-radius:12px;font-weight:800;padding:8px 5px}
+@media(max-width:900px){.ordenes-pro-head{flex-direction:column;border-radius:20px;padding:16px}.ordenes-actions{width:100%;display:grid;grid-template-columns:1fr 1fr}.ordenes-actions .btn{width:100%}.estado-filter-bar{overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}.estado-filter-bar .btn{white-space:nowrap}.ordenes-panel .d-flex{width:100%}.ordenes-panel .btn{width:100%}.ordenes-table-wrap,.diagnostico-table-wrap{display:none!important}.orders-mobile-list{display:grid;gap:12px}.ordenes-footer{display:none}.ordenes-tabs{overflow-x:auto;flex-wrap:nowrap}.ordenes-tabs .nav-link{white-space:nowrap}.order-mobile-actions{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -793,27 +798,97 @@ body{
     </section>
 
     <section id="ordenes" class="screen">
-      <div class="mobile-quick-title"><div><b>Órdenes</b><br><span>Trabajos activos y estados</span></div><i class="bi bi-clipboard2-check"></i></div>
+      <div class="mobile-quick-title"><div><b>Órdenes</b><br><span>Lista, filtros y seguimiento</span></div><i class="bi bi-clipboard2-check"></i></div>
 
-      <div class="cardx p-4">
-        <div class="section-head">
-          <div><h4>Órdenes de trabajo</h4><p>Consulta, filtra y gestiona todos los trabajos del taller.</p></div>
+      <div class="ordenes-pro-head mb-3">
+        <div>
+          <h4><i class="bi bi-clipboard2-check me-2"></i>Órdenes de trabajo</h4>
+          <p><span id="totalOrdenesTaller">5 órdenes</span> · Control de recepción, diagnóstico, reparación, entrega y cuenta.</p>
+        </div>
+        <div class="ordenes-actions">
+          <button class="btn btn-success btn-sm" onclick="exportarOrdenesCSV()"><i class="bi bi-file-earmark-spreadsheet me-1"></i> Descargar CSV</button>
           <button class="btn btn-blue" onclick="showScreen('crear')"><i class="bi bi-plus-circle me-1"></i> Nueva orden</button>
         </div>
-        <div class="searchbar mb-3">
-          <div class="row g-2">
-            <div class="col-md-4"><input class="form-control" placeholder="Buscar por cliente, vehículo, técnico o número de OT"></div>
-            <div class="col-md-2"><select class="form-select"><option>Todos los estados</option><option>Recibido</option><option>En proceso</option></select></div>
-            <div class="col-md-2"><input type="date" class="form-control"></div>
-            <div class="col-md-2"><input type="date" class="form-control"></div>
-            <div class="col-md-2"><button class="btn btn-blue w-100"><i class="bi bi-search me-1"></i> Buscar</button></div>
+      </div>
+
+      <ul class="nav nav-tabs ordenes-tabs mb-3" role="tablist">
+        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabOrdenesTaller" type="button"><i class="bi bi-list-ul me-1"></i> Órdenes</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabDiagnosticoTaller" type="button"><i class="bi bi-clipboard-data me-1"></i> Diagnóstico vehicular</button></li>
+      </ul>
+
+      <div class="tab-content">
+        <div class="tab-pane fade show active" id="tabOrdenesTaller">
+          <div class="estado-filter-bar mb-3" id="filtrosEstadoTaller">
+            <button class="btn btn-sm btn-dark filtro-estado-taller active" onclick="setEstadoOrdenes('',this)">Todas</button>
+            <button class="btn btn-sm btn-outline-secondary filtro-estado-taller" onclick="setEstadoOrdenes('RECIBIDO',this)">Recibido</button>
+            <button class="btn btn-sm btn-outline-secondary filtro-estado-taller" onclick="setEstadoOrdenes('EN_PROCESO',this)">En proceso</button>
+            <button class="btn btn-sm btn-outline-secondary filtro-estado-taller" onclick="setEstadoOrdenes('TERMINADO',this)">Terminado</button>
+            <button class="btn btn-sm btn-outline-secondary filtro-estado-taller" onclick="setEstadoOrdenes('ENTREGADO',this)">Entregado</button>
+            <button class="btn btn-sm btn-outline-secondary filtro-estado-taller" onclick="setEstadoOrdenes('ANULADO',this)">Anulado</button>
+          </div>
+
+          <div class="cardx ordenes-panel mb-3">
+            <div class="row g-2 align-items-end">
+              <div class="col-lg-4">
+                <label class="subtext fw-bold">Buscar</label>
+                <input type="text" id="buscarOrdenTaller" class="form-control" placeholder="Nº orden, placa, cliente, vehículo o técnico" oninput="filtrarOrdenesTaller()">
+              </div>
+              <div class="col-lg-2 col-6">
+                <label class="subtext fw-bold">Desde</label>
+                <input type="date" id="ordenDesdeTaller" class="form-control">
+              </div>
+              <div class="col-lg-2 col-6">
+                <label class="subtext fw-bold">Hasta</label>
+                <input type="date" id="ordenHastaTaller" class="form-control">
+              </div>
+              <div class="col-lg-4 d-flex gap-2 flex-wrap">
+                <button class="btn btn-blue flex-fill" onclick="filtrarOrdenesTaller()"><i class="bi bi-search me-1"></i> Buscar</button>
+                <button class="btn btn-soft" onclick="limpiarFiltrosOrdenes()"><i class="bi bi-x-circle me-1"></i> Limpiar</button>
+                <button class="btn btn-soft" onclick="marcarHoyOrdenes()"><i class="bi bi-calendar-event me-1"></i> Hoy</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="cardx p-3 ordenes-table-card">
+            <div class="table-responsive ordenes-table-wrap">
+              <table class="table table-modern align-middle tbl-ordenes-taller">
+                <thead>
+                  <tr>
+                    <th>OT</th><th>Fecha</th><th>Cliente</th><th>Placa</th><th>Vehículo</th><th>Km</th><th>Técnico</th><th>Observaciones</th><th class="text-center">Img</th><th class="text-center">Entregado</th><th>Estado</th><th>Cuenta</th><th class="text-end">Total</th><th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="ordersList"></tbody>
+              </table>
+            </div>
+            <div id="ordersMobileList" class="orders-mobile-list"></div>
+            <div class="ordenes-footer mt-3">
+              <span class="text-muted small" id="infoPaginaOrdenes">Página 1 de 1</span>
+              <div class="pagination pagination-sm mb-0"><button class="page-link active">1</button></div>
+            </div>
           </div>
         </div>
-        <div class="table-responsive">
-          <table class="table table-modern align-middle">
-            <thead><tr><th>OT</th><th>Fecha</th><th>Cliente</th><th>Vehículo</th><th>Técnico</th><th>Img</th><th>Estado</th><th>Cuenta</th><th class="text-end">Total</th><th></th></tr></thead>
-            <tbody id="ordersList"></tbody>
-          </table>
+
+        <div class="tab-pane fade" id="tabDiagnosticoTaller">
+          <div class="cardx p-4 mb-3">
+            <div class="section-head">
+              <div><h4>Diagnóstico vehicular</h4><p>Historial técnico por orden: escáner, frenos, suspensión, motor, caja y dirección.</p></div>
+              <button class="btn btn-blue"><i class="bi bi-plus-circle me-1"></i> Nuevo diagnóstico</button>
+            </div>
+            <div class="searchbar mb-3">
+              <div class="row g-2">
+                <div class="col-md-6"><input class="form-control" placeholder="Buscar por orden, cliente, placa o diagnóstico"></div>
+                <div class="col-md-3"><input type="date" class="form-control" value="2026-06-04"></div>
+                <div class="col-md-3"><button class="btn btn-blue w-100"><i class="bi bi-search me-1"></i> Filtrar</button></div>
+              </div>
+            </div>
+            <div class="table-responsive diagnostico-table-wrap">
+              <table class="table table-modern align-middle">
+                <thead><tr><th>OT</th><th>Recibido</th><th>Cliente</th><th>Vehículo</th><th>Área</th><th>Técnico</th><th class="text-center">Fotos</th><th>Modificado</th><th>Acciones</th></tr></thead>
+                <tbody id="diagnosticoTallerBody"></tbody>
+              </table>
+            </div>
+            <div id="diagnosticoMobileList" class="orders-mobile-list"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -1136,9 +1211,103 @@ const orders=[
 ];
 function cuentaBadge(c){return c==='ABONADO'?'<span class="badgex b-pro">Abonado</span>':c==='SIN VALOR'?'<span class="badgex b-gray">Sin valor</span>':'<span class="badgex b-danger">Pendiente</span>'}
 function rowDash(o){return `<tr><td class="order-id">#${o.n}</td><td><div class="vehículo">${o.vehículo}</div><div class="subtext">${o.cliente}</div></td><td>${o.mecanico}</td><td><span class="badgex b-rec">${o.estado}</span></td><td>${cuentaBadge(o.cuenta)}</td><td class="text-end fw-bold">${o.total}</td></tr>`}
-function rowList(o){return `<tr><td class="order-id">#${o.n}</td><td>${o.fecha}</td><td>${o.cliente}</td><td><div class="vehículo">${o.vehículo}</div></td><td>${o.mecanico}</td><td>${o.img==='SI'?'<span class="badgex b-ok">Sí</span>':'<span class="badgex b-gray">No</span>'}</td><td><span class="badgex b-rec">${o.estado}</span></td><td>${cuentaBadge(o.cuenta)}</td><td class="text-end fw-bold">${o.total}</td><td><button class="btn btn-soft btn-sm" onclick="showScreen('detalle')"><i class="bi bi-eye"></i></button></td></tr>`}
+const ordenExtra={
+  23:{placa:'GSK-1284',marca:'Toyota',modelo:'Hilux',anio:'2021',km:'84.500',obs:'Mantenimiento preventivo, revisión de frenos y cambio de bujías.',entregado:'NO',proximo:'89.500 km'},
+  22:{placa:'GYE-2047',marca:'Chevrolet',modelo:'Grand Vitara',anio:'2016',km:'132.100',obs:'Diagnóstico con escáner y revisión de dirección hidráulica.',entregado:'NO',proximo:'137.000 km'},
+  21:{placa:'PCB-7710',marca:'Chevrolet',modelo:'D-Max',anio:'2020',km:'98.300',obs:'Cambio de kit de embrague y revisión de caja de cambios.',entregado:'NO',proximo:'103.300 km'},
+  20:{placa:'GXI-4481',marca:'Hyundai',modelo:'Tucson',anio:'2018',km:'76.900',obs:'Mantenimiento de frenos, suspensión delantera y alineación.',entregado:'NO',proximo:'81.900 km'},
+  18:{placa:'PBA-1902',marca:'Ford',modelo:'F-150',anio:'2014',km:'155.600',obs:'Reparación interna de motor y prueba de compresión.',entregado:'SI',proximo:'160.600 km'}
+};
+let estadoOrdenesActual='';
+function estadoBadgeOrden(e){
+  const label=(e||'RECIBIDO').replace('_',' ');
+  const cls={RECIBIDO:'b-rec',EN_PROCESO:'b-pro',TERMINADO:'b-ok',ENTREGADO:'b-gray',ANULADO:'b-danger'}[e]||'b-rec';
+  return `<span class="badgex ${cls}">${label}</span>`;
+}
+function getOrdenData(o){const x=ordenExtra[o.n]||{}; return {...o,...x, vehiculo:o.vehículo||o.vehiculo||o.motor||'-'};}
+function rowList(o){
+  o=getOrdenData(o);
+  const obs=o.obs||'Trabajo registrado en taller.';
+  return `<tr>
+    <td class="order-id">#${o.n}</td>
+    <td>${o.fecha}</td>
+    <td><div class="fw-bold text-dark">${o.cliente}</div><div class="subtext">098 000 ${String(o.n).padStart(4,'0')}</div></td>
+    <td><span class="badgex b-gray">${o.placa||'-'}</span></td>
+    <td class="vehiculo-cell"><b>${o.vehiculo}</b><small>${o.marca||''} ${o.modelo||''} · ${o.anio||''}</small></td>
+    <td>${o.km||'-'}</td>
+    <td>${o.mecanico}</td>
+    <td><div class="obs-mini" title="${obs}">${obs}</div></td>
+    <td class="text-center">${o.img==='SI'?'<span class="badgex b-ok">Sí</span>':'<span class="badgex b-gray">No</span>'}</td>
+    <td class="text-center">${o.entregado==='SI'?'<span class="badgex b-ok">Sí</span>':'<span class="badgex b-gray">No</span>'}</td>
+    <td>${estadoBadgeOrden(o.estado)}</td>
+    <td>${cuentaBadge(o.cuenta)}</td>
+    <td class="text-end fw-bold">${o.total}</td>
+    <td><div class="action-grid">
+      <button class="btn btn-soft btn-sm" title="Ver detalle" onclick="showScreen('detalle')"><i class="bi bi-eye"></i></button>
+      <button class="btn btn-outline-success btn-sm" title="WhatsApp" onclick="alert('Demo: se abriría WhatsApp con el estado de la OT #${o.n}')"><i class="bi bi-whatsapp"></i></button>
+      <button class="btn btn-outline-primary btn-sm" title="QR cliente" onclick="showScreen('qr_publicos')"><i class="bi bi-qr-code"></i></button>
+      <button class="btn btn-outline-secondary btn-sm" title="Fotos"><i class="bi bi-camera"></i></button>
+      <button class="btn btn-outline-info btn-sm" title="Imprimir"><i class="bi bi-printer"></i></button>
+      <button class="btn btn-edit-orange btn-sm" title="Editar"><i class="bi bi-pencil"></i></button>
+    </div></td>
+  </tr>`;
+}
+function orderMobileCard(o){
+  o=getOrdenData(o);
+  const obs=o.obs||'Trabajo registrado en taller.';
+  return `<div class="order-mobile-card">
+    <div class="order-mobile-top"><div><b>OT #${o.n}</b><div class="subtext">${o.fecha} · ${o.placa||'-'}</div></div>${estadoBadgeOrden(o.estado)}</div>
+    <div class="order-line"><span>Cliente</span><span>${o.cliente}</span></div>
+    <div class="order-line"><span>Vehículo</span><span>${o.vehiculo}</span></div>
+    <div class="order-line"><span>Kilometraje</span><span>${o.km||'-'}</span></div>
+    <div class="order-line"><span>Técnico</span><span>${o.mecanico}</span></div>
+    <div class="order-line"><span>Cuenta</span><span>${o.cuenta}</span></div>
+    <div class="order-line"><span>Total</span><span>${o.total}</span></div>
+    <div class="order-line"><span>Observación</span><span>${obs}</span></div>
+    <div class="order-mobile-actions">
+      <button class="btn btn-soft" onclick="showScreen('detalle')"><i class="bi bi-eye"></i> Ver</button>
+      <button class="btn btn-outline-success" onclick="alert('Demo: WhatsApp OT #${o.n}')"><i class="bi bi-whatsapp"></i> WhatsApp</button>
+      <button class="btn btn-outline-primary" onclick="showScreen('qr_publicos')"><i class="bi bi-qr-code"></i> QR</button>
+      <button class="btn btn-outline-secondary"><i class="bi bi-camera"></i> Fotos</button>
+      <button class="btn btn-outline-info"><i class="bi bi-printer"></i> Imprimir</button>
+      <button class="btn btn-edit-orange"><i class="bi bi-pencil"></i> Editar</button>
+    </div>
+  </div>`;
+}
+function ordenesFiltradas(){
+  const q=(document.getElementById('buscarOrdenTaller')?.value||'').toLowerCase().trim();
+  return orders.map(getOrdenData).filter(o=>{
+    const stateOk=!estadoOrdenesActual || o.estado===estadoOrdenesActual;
+    const hay=(String(o.n)+' '+o.fecha+' '+o.cliente+' '+(o.placa||'')+' '+o.vehiculo+' '+o.mecanico+' '+(o.obs||'')).toLowerCase();
+    return stateOk && (!q || hay.includes(q));
+  });
+}
+function renderOrdenesTaller(){
+  const rows=ordenesFiltradas();
+  const tbody=document.getElementById('ordersList'); if(tbody) tbody.innerHTML=rows.map(rowList).join('') || '<tr><td colspan="14" class="text-center text-muted py-4">Sin resultados</td></tr>';
+  const mob=document.getElementById('ordersMobileList'); if(mob) mob.innerHTML=rows.map(orderMobileCard).join('') || '<div class="order-mobile-card text-center text-muted">Sin resultados</div>';
+  const total=document.getElementById('totalOrdenesTaller'); if(total) total.textContent=rows.length+' órdenes';
+  const info=document.getElementById('infoPaginaOrdenes'); if(info) info.textContent='Página 1 de 1 · '+rows.length+' registros visibles';
+}
+function filtrarOrdenesTaller(){renderOrdenesTaller();}
+function limpiarFiltrosOrdenes(){['buscarOrdenTaller','ordenDesdeTaller','ordenHastaTaller'].forEach(id=>{const e=document.getElementById(id); if(e) e.value='';}); renderOrdenesTaller();}
+function marcarHoyOrdenes(){const h='2026-06-04'; const d=document.getElementById('ordenDesdeTaller'), a=document.getElementById('ordenHastaTaller'); if(d)d.value=h;if(a)a.value=h; renderOrdenesTaller();}
+function setEstadoOrdenes(estado,btn){estadoOrdenesActual=estado; document.querySelectorAll('.filtro-estado-taller').forEach(b=>{b.classList.remove('active','btn-dark'); b.classList.add('btn-outline-secondary');}); if(btn){btn.classList.add('active','btn-dark'); btn.classList.remove('btn-outline-secondary');} renderOrdenesTaller();}
+function exportarOrdenesCSV(){
+  const rows=ordenesFiltradas();
+  const headers=['OT','Fecha','Cliente','Placa','Vehículo','Km','Técnico','Estado','Cuenta','Total'];
+  const csv=[headers.join(',')].concat(rows.map(o=>[o.n,o.fecha,o.cliente,o.placa||'',o.vehiculo,o.km||'',o.mecanico,o.estado,o.cuenta,o.total].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(','))).join('\n');
+  const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='ordenes_tallerpro.csv'; a.click(); URL.revokeObjectURL(url);
+}
+function renderDiagnosticosTaller(){
+  const rows=orders.map(getOrdenData).slice(0,4);
+  const html=rows.map((o,i)=>`<tr><td class="order-id">#${o.n}</td><td>${o.fecha}</td><td>${o.cliente}</td><td>${o.vehiculo}</td><td>${['Escáner','Frenos','Embrague','Motor'][i]||'General'}</td><td>${o.mecanico}</td><td class="text-center"><span class="badgex ${o.img==='SI'?'b-ok':'b-gray'}">${o.img==='SI'?2:0}</span></td><td>04/06/2026</td><td><button class="btn btn-soft btn-sm"><i class="bi bi-pencil-square"></i></button> <button class="btn btn-outline-info btn-sm"><i class="bi bi-printer"></i></button></td></tr>`).join('');
+  const body=document.getElementById('diagnosticoTallerBody'); if(body) body.innerHTML=html;
+  const mob=document.getElementById('diagnosticoMobileList'); if(mob) mob.innerHTML=rows.map((o,i)=>`<div class="order-mobile-card"><div class="order-mobile-top"><b>OT #${o.n}</b><span class="badgex b-rec">${['Escáner','Frenos','Embrague','Motor'][i]||'General'}</span></div><div class="order-line"><span>Cliente</span><span>${o.cliente}</span></div><div class="order-line"><span>Vehículo</span><span>${o.vehiculo}</span></div><div class="order-line"><span>Técnico</span><span>${o.mecanico}</span></div><div class="order-mobile-actions"><button class="btn btn-soft">Editar</button><button class="btn btn-outline-info">Imprimir</button></div></div>`).join('');
+}
 document.getElementById('ordersDashboard').innerHTML=orders.map(rowDash).join('');
-document.getElementById('ordersList').innerHTML=orders.map(rowList).join('');
+renderOrdenesTaller();
+renderDiagnosticosTaller();
 
 function simpleModule(id,title,subtitle,headers,rows,button){
   document.getElementById(id).innerHTML=`<div class="mobile-quick-title"><div><b>${title}</b><br><span>${subtitle}</span></div><i class="bi bi-grid-3x3-gap"></i></div><div class="cardx p-4"><div class="section-head"><div><h4>${title}</h4><p>${subtitle}</p></div><button class="btn btn-blue">${button}</button></div><div class="searchbar mb-3"><input class="form-control" placeholder="Buscar registro..."></div><div class="table-responsive"><table class="table table-modern"><thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}<th></th></tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}<td><button class="btn btn-soft btn-sm"><i class="bi bi-pencil"></i></button></td></tr>`).join('')}</tbody></table></div></div>`;
