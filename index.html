@@ -1197,6 +1197,7 @@ function showScreen(id,el){
   document.getElementById('pageSubtitle').textContent=titles[id]?.[1]||'Sistema para talleres automotrices';
   toggleMenu(false);
   syncBottom(id);
+  if(id==='clientes' && typeof renderClientesPro==='function') setTimeout(renderClientesPro,20);
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -1942,7 +1943,17 @@ const tpClientes=[
  {id:4,nombre:'GABRIEL EDUARDO MORENO',tipo:'PERSONA NATURAL',ruc:'0956789012',telefono:'0955678901',email:'cliente05@tallerpro.demo',direccion:'Samborondón',vehiculos:['GTR-6002 · Mazda BT-50 2017'],ultima:'OT #1049 · 31/05/2026',total:220.00,estado:'Activo',ordenes:1},
  {id:5,nombre:'RICARDO JAVIER BENÍTEZ',tipo:'PERSONA NATURAL',ruc:'0967890123',telefono:'0946789012',email:'cliente06@tallerpro.demo',direccion:'Via a la Costa',vehiculos:['GSD-3900 · Ford F-150 2016'],ultima:'Sin órdenes recientes',total:0,estado:'Prospecto',ordenes:0}
 ];
-function tpClientesRoot(){return document.getElementById('clientesProRoot')}
+function tpClientesRoot(){
+  let root=document.getElementById('clientesProRoot');
+  if(!root){
+    const sec=document.getElementById('clientes');
+    if(sec){
+      sec.innerHTML='<div class="mobile-quick-title"><div><b>Clientes</b><br><span>Base comercial y vehículos</span></div><i class="bi bi-people"></i></div><div id="clientesProRoot"></div>';
+      root=document.getElementById('clientesProRoot');
+    }
+  }
+  return root;
+}
 function tpClienteBadge(e){return e==='Corporativo'?'<span class="badgex b-pro">Corporativo</span>':e==='Prospecto'?'<span class="badgex b-gray">Prospecto</span>':'<span class="badgex b-ok">Activo</span>'}
 function tpClientesFiltrados(){
  const q=(document.getElementById('clienteBuscar')?.value||'').toLowerCase().trim();
