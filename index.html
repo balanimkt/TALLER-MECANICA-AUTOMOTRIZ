@@ -1361,6 +1361,7 @@ function showScreen(id,el){
   if(id==='ordenes' && typeof cargarOrdenesSheets==='function') setTimeout(cargarOrdenesSheets,20);
   if(id==='crear' && typeof prepararNuevaOrden==='function') setTimeout(prepararNuevaOrden,20);
   if(id==='vehiculos' && typeof renderVehiculosModule==='function') setTimeout(renderVehiculosModule,20);
+  if(id==='técnicos' && typeof renderOperariosModule==='function') setTimeout(renderOperariosModule,20);
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -2403,12 +2404,328 @@ simpleModule('articulos','Artículos','Categorías de artículos e insumos.',['I
  ['1','ACCESORIOS','<button class="btn btn-warning btn-sm">Editar</button> <button class="btn btn-danger btn-sm">Eliminar</button>']
 ],'Nuevo');
 
-simpleModule('técnicos','Técnicos operativos','Personal operativo por departamento.',['ID','Descripción','Departamento','Acciones'],[
- ['28','JAIME MACÍAS','LAVADO','<button class="btn btn-warning btn-sm">Editar</button> <button class="btn btn-danger btn-sm">Eliminar</button>'],
- ['27','DANIEL ARGUELLO','LAVADO','<button class="btn btn-warning btn-sm">Editar</button> <button class="btn btn-danger btn-sm">Eliminar</button>'],
- ['26','WILMER CASTRO','TORNO','<button class="btn btn-warning btn-sm">Editar</button> <button class="btn btn-danger btn-sm">Eliminar</button>'],
- ['22','LEONARDO SOLÍS','CABEZOTE','<button class="btn btn-warning btn-sm">Editar</button> <button class="btn btn-danger btn-sm">Eliminar</button>']
-],'Nuevo');
+
+// ===== MÓDULO TÉCNICOS OPERATIVOS / OPERARIOS CONECTADO A GOOGLE SHEETS =====
+let tpOperariosData = [];
+let tpOperarioEditId = null;
+
+function operarioEsc(v){
+  return String(v ?? '').replace(/[&<>"']/g, m => ({
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":'&#39;'
+  }[m]));
+}
+
+function renderOperariosModule(){
+  const cont = document.getElementById('técnicos');
+  if(!cont) return;
+
+  cont.innerHTML = `
+    <div class="mobile-quick-title">
+      <div><b>Técnicos operativos</b><br><span>Personal operativo conectado a Google Sheets</span></div>
+      <i class="bi bi-person-workspace"></i>
+    </div>
+
+    <div class="tech-hero">
+      <div>
+        <h4><i class="bi bi-person-workspace me-2 text-primary"></i>Técnicos operativos</h4>
+        <p>Registro de operarios por área, especialidad y estado. Pestaña Google Sheets: <strong>operarios</strong>.</p>
+      </div>
+      <div class="tech-actions">
+        <button class="btn btn-soft" onclick="cargarOperariosSheets()">
+          <i class="bi bi-arrow-clockwise me-1"></i>Actualizar
+        </button>
+        <button class="btn btn-blue" onclick="abrirOperarioModal()">
+          <i class="bi bi-plus-circle me-1"></i>Nuevo técnico
+        </button>
+      </div>
+    </div>
+
+    <div class="tech-stats">
+      <div class="tech-stat"><small>Total técnicos</small><h3 id="opTotal">0</h3></div>
+      <div class="tech-stat"><small>Activos</small><h3 id="opActivos">0</h3></div>
+      <div class="tech-stat"><small>Inactivos</small><h3 id="opInactivos">0</h3></div>
+      <div class="tech-stat"><small>Áreas</small><h3 id="opAreas">0</h3></div>
+      <div class="tech-stat"><small>Especialidades</small><h3 id="opEspecialidades">0</h3></div>
+    </div>
+
+    <div class="tech-filter">
+      <div class="row g-2 align-items-end">
+        <div class="col-md-9">
+          <label class="form-label small fw-bold">Buscar técnico</label>
+          <input id="buscarOperariosInput" class="form-control" placeholder="Nombre, área, especialidad, teléfono o estado" oninput="renderOperariosTabla()">
+        </div>
+        <div class="col-md-3">
+          <button class="btn btn-blue w-100" onclick="renderOperariosTabla()">
+            <i class="bi bi-search me-1"></i>Buscar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-responsive tech-table-wrap">
+      <table class="table table-modern tech-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Fecha</th>
+            <th>Técnico</th>
+            <th>Área</th>
+            <th>Especialidad</th>
+            <th>Teléfono</th>
+            <th>Estado</th>
+            <th>Notas</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="operariosTbody">
+          <tr><td colspan="9" class="text-center text-muted">Cargando técnicos...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tech-mobile-list" id="operariosMobileList"></div>
+
+    <div class="tech-modal-backdrop" id="operarioModal">
+      <div class="tech-modal">
+        <div class="tech-modal-head">
+          <h5 id="operarioModalTitulo"><i class="bi bi-person-workspace me-2"></i>Nuevo técnico operativo</h5>
+          <button class="tech-close" onclick="cerrarOperarioModal()"><i class="bi bi-x-lg"></i></button>
+        </div>
+
+        <div class="tech-modal-body">
+          <input type="hidden" id="operarioIdEdit">
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Nombre *</label>
+              <input id="operarioNombre" class="form-control" placeholder="Nombre del técnico" style="text-transform:uppercase">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Teléfono</label>
+              <input id="operarioTelefono" class="form-control" placeholder="0999999999">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Área / Departamento</label>
+              <input id="operarioArea" class="form-control" placeholder="Mecánica, torno, lavado, cabezote..." style="text-transform:uppercase">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Especialidad</label>
+              <input id="operarioEspecialidad" class="form-control" placeholder="Motor, diagnóstico, frenos..." style="text-transform:uppercase">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Estado</label>
+              <select id="operarioEstado" class="form-select">
+                <option>Activo</option>
+                <option>Inactivo</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Notas</label>
+              <input id="operarioNotas" class="form-control" placeholder="Observaciones">
+            </div>
+          </div>
+        </div>
+
+        <div class="tech-modal-foot">
+          <button class="btn btn-outline-secondary" onclick="cerrarOperarioModal()">Cancelar</button>
+          <button class="btn btn-blue" onclick="guardarOperarioDesdeHTML()"><i class="bi bi-save me-1"></i>Guardar técnico</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  cargarOperariosSheets();
+}
+
+async function cargarOperariosSheets(){
+  const tbody = document.getElementById('operariosTbody');
+  if(tbody) tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted">Cargando desde Google Sheets...</td></tr>';
+
+  try{
+    const r = await apiTallerPro('listarOperarios');
+    if(!r.ok) throw new Error(r.mensaje || 'No se pudieron listar técnicos');
+    tpOperariosData = r.operarios || [];
+    renderOperariosTabla();
+  }catch(err){
+    if(tbody) tbody.innerHTML = `<tr><td colspan="9" class="text-center text-danger">Error: ${operarioEsc(err.message)}</td></tr>`;
+    alert('Error de conexión con Apps Script al listar técnicos: ' + err.message);
+  }
+}
+
+function renderOperariosTabla(){
+  const q = (document.getElementById('buscarOperariosInput')?.value || '').toLowerCase().trim();
+  const tbody = document.getElementById('operariosTbody');
+  const mobile = document.getElementById('operariosMobileList');
+
+  const rows = tpOperariosData.filter(o => {
+    const texto = [o.id,o.fecha,o.nombre,o.area,o.especialidad,o.telefono,o.estado,o.notas].join(' ').toLowerCase();
+    return !q || texto.includes(q);
+  });
+
+  const activos = tpOperariosData.filter(o => String(o.estado || '').toLowerCase() !== 'inactivo').length;
+  const inactivos = tpOperariosData.filter(o => String(o.estado || '').toLowerCase() === 'inactivo').length;
+  const areas = new Set(tpOperariosData.map(o => String(o.area || '').trim()).filter(Boolean)).size;
+  const especialidades = new Set(tpOperariosData.map(o => String(o.especialidad || '').trim()).filter(Boolean)).size;
+
+  const setText = (id,val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
+  setText('opTotal', tpOperariosData.length);
+  setText('opActivos', activos);
+  setText('opInactivos', inactivos);
+  setText('opAreas', areas);
+  setText('opEspecialidades', especialidades);
+
+  if(tbody){
+    if(!rows.length){
+      tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted">No hay técnicos registrados.</td></tr>';
+    }else{
+      tbody.innerHTML = rows.map(o => `
+        <tr>
+          <td><strong>${operarioEsc(o.id)}</strong></td>
+          <td>${operarioEsc(formatFechaOperario(o.fecha))}</td>
+          <td>
+            <div class="tech-name">
+              <div class="tech-avatar">${operarioEsc(inicialesOperario(o.nombre))}</div>
+              <div><b>${operarioEsc(o.nombre)}</b><small>${operarioEsc(o.telefono)}</small></div>
+            </div>
+          </td>
+          <td>${operarioEsc(o.area)}</td>
+          <td>${operarioEsc(o.especialidad)}</td>
+          <td>${operarioEsc(o.telefono)}</td>
+          <td>${String(o.estado || 'Activo').toLowerCase()==='inactivo' ? '<span class="badgex b-danger">Inactivo</span>' : '<span class="badgex b-ok">Activo</span>'}</td>
+          <td>${operarioEsc(o.notas)}</td>
+          <td>
+            <div class="tech-action-grid">
+              <button class="btn btn-soft btn-sm" onclick="editarOperario('${operarioEsc(o.id)}')"><i class="bi bi-pencil"></i></button>
+              <button class="btn btn-outline-danger btn-sm" onclick="inactivarOperario('${operarioEsc(o.id)}')"><i class="bi bi-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+  }
+
+  if(mobile){
+    if(!rows.length){
+      mobile.innerHTML = '<div class="tech-mobile-card text-center text-muted">No hay técnicos registrados.</div>';
+    }else{
+      mobile.innerHTML = rows.map(o => `
+        <div class="tech-mobile-card">
+          <div class="tech-mobile-top">
+            <div class="tech-mobile-person">
+              <div class="tech-avatar">${operarioEsc(inicialesOperario(o.nombre))}</div>
+              <div><b>${operarioEsc(o.nombre)}</b><br><small>${operarioEsc(o.id)}</small></div>
+            </div>
+            ${String(o.estado || 'Activo').toLowerCase()==='inactivo' ? '<span class="badgex b-danger">Inactivo</span>' : '<span class="badgex b-ok">Activo</span>'}
+          </div>
+          <div class="tech-line"><span>Área</span><span>${operarioEsc(o.area)}</span></div>
+          <div class="tech-line"><span>Especialidad</span><span>${operarioEsc(o.especialidad)}</span></div>
+          <div class="tech-line"><span>Teléfono</span><span>${operarioEsc(o.telefono)}</span></div>
+          <div class="tech-line"><span>Notas</span><span>${operarioEsc(o.notas)}</span></div>
+          <div class="tech-mobile-actions">
+            <button class="btn btn-soft" onclick="editarOperario('${operarioEsc(o.id)}')"><i class="bi bi-pencil me-1"></i>Editar</button>
+            <button class="btn btn-outline-danger" onclick="inactivarOperario('${operarioEsc(o.id)}')"><i class="bi bi-trash me-1"></i>Inactivar</button>
+          </div>
+        </div>
+      `).join('');
+    }
+  }
+}
+
+function abrirOperarioModal(){
+  if(!document.getElementById('operarioModal') && typeof renderOperariosModule==='function') renderOperariosModule();
+  tpOperarioEditId = null;
+
+  document.getElementById('operarioModalTitulo').innerHTML = '<i class="bi bi-person-workspace me-2"></i>Nuevo técnico operativo';
+  document.getElementById('operarioIdEdit').value = '';
+
+  ['operarioNombre','operarioArea','operarioEspecialidad','operarioTelefono','operarioNotas'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+  document.getElementById('operarioEstado').value = 'Activo';
+  document.getElementById('operarioModal').classList.add('show');
+}
+
+function cerrarOperarioModal(){
+  document.getElementById('operarioModal')?.classList.remove('show');
+}
+
+function editarOperario(id){
+  const o = tpOperariosData.find(x => String(x.id) === String(id));
+  if(!o){ alert('Técnico no encontrado.'); return; }
+
+  tpOperarioEditId = id;
+  document.getElementById('operarioModalTitulo').innerHTML = '<i class="bi bi-pencil-square me-2"></i>Editar técnico operativo';
+  document.getElementById('operarioIdEdit').value = o.id || '';
+  document.getElementById('operarioNombre').value = o.nombre || '';
+  document.getElementById('operarioArea').value = o.area || '';
+  document.getElementById('operarioEspecialidad').value = o.especialidad || '';
+  document.getElementById('operarioTelefono').value = o.telefono || '';
+  document.getElementById('operarioEstado').value = o.estado || 'Activo';
+  document.getElementById('operarioNotas').value = o.notas || '';
+  document.getElementById('operarioModal').classList.add('show');
+}
+
+async function guardarOperarioDesdeHTML(){
+  const datos = {
+    id: document.getElementById('operarioIdEdit')?.value || '',
+    nombre: document.getElementById('operarioNombre')?.value.trim().toUpperCase() || '',
+    area: document.getElementById('operarioArea')?.value.trim().toUpperCase() || '',
+    especialidad: document.getElementById('operarioEspecialidad')?.value.trim().toUpperCase() || '',
+    telefono: document.getElementById('operarioTelefono')?.value.trim() || '',
+    estado: document.getElementById('operarioEstado')?.value || 'Activo',
+    notas: document.getElementById('operarioNotas')?.value.trim() || ''
+  };
+
+  if(!datos.nombre){ alert('Ingrese el nombre del técnico operativo.'); return; }
+
+  try{
+    const accion = datos.id ? 'actualizarOperario' : 'guardarOperario';
+    const r = await apiTallerPro(accion, datos);
+    if(!r.ok) throw new Error(r.mensaje || 'No se pudo guardar el técnico');
+
+    cerrarOperarioModal();
+    await cargarOperariosSheets();
+    alert('Técnico operativo guardado en Google Sheets: ' + (r.id || datos.id || ''));
+  }catch(err){
+    alert('Error al guardar técnico operativo: ' + err.message);
+  }
+}
+
+async function inactivarOperario(id){
+  if(!confirm('¿Desea marcar este técnico como inactivo?')) return;
+
+  try{
+    const r = await apiTallerPro('eliminarOperario', {id});
+    if(!r.ok) throw new Error(r.mensaje || 'No se pudo inactivar el técnico');
+    await cargarOperariosSheets();
+    alert('Técnico operativo marcado como inactivo.');
+  }catch(err){
+    alert('Error al inactivar técnico operativo: ' + err.message);
+  }
+}
+
+function inicialesOperario(nombre){
+  return String(nombre || 'T').split(/\s+/).filter(Boolean).slice(0,2).map(x => x[0]).join('').toUpperCase() || 'T';
+}
+
+function formatFechaOperario(fecha){
+  if(!fecha) return '';
+  try{
+    const d = new Date(fecha);
+    if(isNaN(d.getTime())) return fecha;
+    return d.toLocaleDateString('es-EC');
+  }catch(e){
+    return fecha;
+  }
+}
+
+renderOperariosModule();
+
 
 // ===== MÓDULO PARTES DE VEHÍCULO: actualizado solo esta sección =====
 const pvComponentes=[
