@@ -1622,52 +1622,338 @@ function repEtiqueta(id){const r=repuestosRows.find(x=>x.id===id);alert('Demo: i
 
 
 
-const laborDepartments=['MECÁNICA GENERAL','MOTOR','FRENOS','SUSPENSIÓN','DIRECCIÓN','TRANSMISIÓN','EMBRAGUE','DIAGNÓSTICO / ESCÁNER','ELECTRICIDAD','MANTENIMIENTO','VARIOS'];
-const laborOperators=['Sin técnico asignado','Carlos Mendoza','Fernando Morales','Jorge Ramírez','Miguel Andrade','Luis Herrera','Roberto Sánchez','Diego Salazar','Andrés Cevallos','Pedro Navarro','Wilmer Castro'];
-const laborFields=['NINGUNO (cantidad fija)','CILINDROS (NoCilindros)','BUJÍAS (NoBujias)','RUEDAS (NoRuedas)','DISCOS DE FRENO (NoDiscosFreno)','PASTILLAS (NoPastillas)','AMORTIGUADORES (NoAmortiguadores)','INYECTORES (NoInyectores)','VÁLVULAS (NoValvulas)','MARCHAS / CAMBIOS (NoMarchas)','BRAZOS DE SUSPENSIÓN (NoBrazos)','CALIBRACIÓN (NoCalibracion)'];
-let laborRows=[
- {id:1128,desc:'CAMBIO DE ACEITE Y FILTRO',dept:'MANTENIMIENTO',op:'Carlos Mendoza',field:'NINGUNO',qty:'1.00',price:'$25.00'},
- {id:45,desc:'CAMBIO DE BUJÍAS',dept:'MOTOR',op:'Fernando Morales',field:'BUJÍAS',qty:'4.00',price:'$20.00'},
- {id:62,desc:'MANTENIMIENTO DE FRENOS DELANTEROS',dept:'FRENOS',op:'Miguel Andrade',field:'RUEDAS',qty:'2.00',price:'$35.00'},
- {id:1126,desc:'CAMBIO DE DISCOS DE EMBRAGUE',dept:'EMBRAGUE',op:'Luis Herrera',field:'NINGUNO',qty:'1.00',price:'$85.00'},
- {id:14,desc:'ALINEACIÓN Y BALANCEO',dept:'DIRECCIÓN',op:'Pedro Navarro',field:'RUEDAS',qty:'4.00',price:'$50.00'},
- {id:28,desc:'ESCÁNER Y DIAGNÓSTICO AUTOMOTRIZ',dept:'DIAGNÓSTICO / ESCÁNER',op:'Wilmer Castro',field:'NINGUNO',qty:'1.00',price:'$30.00'},
- {id:27,desc:'REPARACIÓN INTERIOR DEL MOTOR',dept:'MOTOR',op:'Roberto Sánchez',field:'CILINDROS',qty:'4.00',price:'$180.00'},
- {id:96,desc:'MANTENIMIENTO DE CAJA DE CAMBIOS',dept:'TRANSMISIÓN',op:'Diego Salazar',field:'MARCHAS / CAMBIOS',qty:'1.00',price:'$120.00'},
- {id:24,desc:'MANTENIMIENTO DE DIRECCIÓN',dept:'DIRECCIÓN',op:'Andrés Cevallos',field:'NINGUNO',qty:'1.00',price:'$65.00'},
- {id:107,desc:'CAMBIO DE AMORTIGUADORES',dept:'SUSPENSIÓN',op:'Jorge Ramírez',field:'AMORTIGUADORES',qty:'2.00',price:'$45.00'}
-];
-function optionsFrom(arr,empty){return `<option>${empty}</option>`+arr.map(x=>`<option>${x}</option>`).join('')}
+
+/* ===== MÓDULO MANO DE OBRA CONECTADO A GOOGLE SHEETS =====
+   Pantalla visible: Mano de obra
+   Pestaña Google Sheets: obras
+   Acciones Apps Script: guardarObra, listarObras, obtenerObra, actualizarObra, eliminarObra
+*/
+const laborDepartments = ['MECÁNICA GENERAL','MOTOR','FRENOS','SUSPENSIÓN','DIRECCIÓN','TRANSMISIÓN','EMBRAGUE','DIAGNÓSTICO / ESCÁNER','ELECTRICIDAD','MANTENIMIENTO','VARIOS'];
+let laborRows = [];
+let laborEditId = null;
+
+function laborEsc(v){
+  return String(v ?? '').replace(/[&<>"']/g, m => ({
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":'&#39;'
+  }[m]));
+}
+
+function laborMoney(v){
+  const n = Number(v || 0);
+  return '$' + n.toFixed(2);
+}
+
+function laborGetId(id){
+  return document.getElementById(id);
+}
+
+function laborNormalizarObra(o){
+  const horas = Number(o.horas || 0);
+  const precio = Number(o.precio || 0);
+  const subtotal = Number(o.subtotal || (horas * precio) || 0);
+
+  return {
+    id: o.id || '',
+    orden: o.orden || '',
+    servicio: o.servicio || '',
+    tecnico: o.tecnico || '',
+    descripcion: o.descripcion || '',
+    horas: horas,
+    precio: precio,
+    subtotal: subtotal,
+    estado: o.estado || 'Activo'
+  };
+}
+
+async function cargarManoObraSheets(){
+  const tbody = laborGetId('laborRows');
+  if(tbody){
+    tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted">Cargando mano de obra desde Google Sheets...</td></tr>';
+  }
+
+  try{
+    const r = await apiTallerPro('listarObras');
+    if(!r.ok) throw new Error(r.mensaje || 'No se pudo listar mano de obra');
+    laborRows = (r.obras || []).map(laborNormalizarObra);
+    renderLaborRows();
+  }catch(err){
+    if(tbody){
+      tbody.innerHTML = `<tr><td colspan="9" class="text-center text-danger">Error: ${laborEsc(err.message)}</td></tr>`;
+    }
+    alert('Error de conexión con Apps Script al listar mano de obra: ' + err.message);
+  }
+}
+
 function renderLaborRows(){
- const q=(document.getElementById('laborSearch')?.value||'').toLowerCase();
- const dep=(document.getElementById('laborFilterDept')?.value||'');
- const filtered=laborRows.filter(r=>(!q||r.desc.toLowerCase().includes(q)||r.dept.toLowerCase().includes(q)||r.op.toLowerCase().includes(q)) && (!dep||dep.includes('Todos')||dep===r.dept));
- document.getElementById('laborRows').innerHTML=filtered.map(r=>`<tr><td>${r.id}</td><td class="fw-bold">${r.desc}</td><td>${r.dept}</td><td>${r.op}</td><td><span class="badgex b-rec">${r.field}</span></td><td>${r.qty}</td><td>${r.price}</td><td class="text-end"><button class="action-mini action-edit" title="Editar"><i class="bi bi-pencil"></i></button><button class="action-mini action-price" title="Precio"><i class="bi bi-currency-dollar"></i></button><button class="action-mini action-delete" title="Eliminar"><i class="bi bi-trash"></i></button></td></tr>`).join('');
- const cards=filtered.map(r=>`<div class="mobile-data-card"><div class="mobile-data-top"><b>${r.desc}</b><span class="badgex b-gray">${r.id}</span></div><div class="line"><span>Departamento</span><span>${r.dept}</span></div><div class="line"><span>Técnico</span><span>${r.op}</span></div><div class="line"><span>Campo vehículo</span><span>${r.field}</span></div><div class="line"><span>Cant. fija</span><span>${r.qty}</span></div><div class="line"><span>Precio</span><span>${r.price}</span></div><div class="mobile-data-actions"><button class="btn btn-soft"><i class="bi bi-pencil"></i> Editar</button><button class="btn btn-blue"><i class="bi bi-currency-dollar"></i> Precio</button></div></div>`).join('');
- buildMobileCard('#mano .cardx',cards);
+  const q = (laborGetId('laborSearch')?.value || '').toLowerCase();
+  const estado = (laborGetId('laborFilterEstado')?.value || '');
+
+  const filtered = laborRows.filter(r => {
+    const texto = [r.id, r.orden, r.servicio, r.tecnico, r.descripcion, r.estado].join(' ').toLowerCase();
+    const coincideBusqueda = !q || texto.includes(q);
+    const coincideEstado = !estado || estado.includes('Todos') || estado === r.estado;
+    return coincideBusqueda && coincideEstado;
+  });
+
+  const tbody = laborGetId('laborRows');
+  if(tbody){
+    tbody.innerHTML = filtered.length ? filtered.map(r => `
+      <tr>
+        <td class="fw-bold">${laborEsc(r.id)}</td>
+        <td>${laborEsc(r.orden || 'Catálogo')}</td>
+        <td class="fw-bold">${laborEsc(r.servicio)}</td>
+        <td>${laborEsc(r.tecnico || 'Sin técnico')}</td>
+        <td>${laborEsc(r.descripcion || '')}</td>
+        <td>${Number(r.horas || 0).toFixed(2)}</td>
+        <td>${laborMoney(r.precio)}</td>
+        <td class="fw-bold">${laborMoney(r.subtotal)}</td>
+        <td><span class="badgex ${r.estado === 'Activo' ? 'b-ok' : 'b-gray'}">${laborEsc(r.estado)}</span></td>
+        <td class="text-end">
+          <button class="action-mini action-edit" title="Editar" onclick="editarObra('${laborEsc(r.id)}')"><i class="bi bi-pencil"></i></button>
+          <button class="action-mini action-delete" title="Inactivar" onclick="eliminarObraDesdeHTML('${laborEsc(r.id)}')"><i class="bi bi-trash"></i></button>
+        </td>
+      </tr>
+    `).join('') : '<tr><td colspan="10" class="text-center text-muted">No hay registros de mano de obra.</td></tr>';
+  }
+
+  const cards = filtered.map(r => `
+    <div class="mobile-data-card">
+      <div class="mobile-data-top"><b>${laborEsc(r.servicio)}</b><span class="badgex b-gray">${laborEsc(r.id)}</span></div>
+      <div class="line"><span>Orden</span><span>${laborEsc(r.orden || 'Catálogo')}</span></div>
+      <div class="line"><span>Técnico</span><span>${laborEsc(r.tecnico || 'Sin técnico')}</span></div>
+      <div class="line"><span>Descripción</span><span>${laborEsc(r.descripcion || '')}</span></div>
+      <div class="line"><span>Horas</span><span>${Number(r.horas || 0).toFixed(2)}</span></div>
+      <div class="line"><span>Precio</span><span>${laborMoney(r.precio)}</span></div>
+      <div class="line"><span>Subtotal</span><span>${laborMoney(r.subtotal)}</span></div>
+      <div class="mobile-data-actions">
+        <button class="btn btn-soft" onclick="editarObra('${laborEsc(r.id)}')"><i class="bi bi-pencil"></i> Editar</button>
+        <button class="btn btn-outline-danger" onclick="eliminarObraDesdeHTML('${laborEsc(r.id)}')"><i class="bi bi-trash"></i> Inactivar</button>
+      </div>
+    </div>
+  `).join('');
+  buildMobileCard('#mano .cardx', cards);
 }
-function openLaborModal(){document.getElementById('laborModal').classList.add('show')}
-function closeLaborModal(){document.getElementById('laborModal').classList.remove('show')}
-function saveLaborDemo(){
- const desc=document.getElementById('laborDesc').value.trim()||'NUEVO SERVICIO AUTOMOTRIZ';
- laborRows.unshift({id:Math.max(...laborRows.map(r=>r.id))+1,desc:desc.toUpperCase(),dept:document.getElementById('laborDept').value.replace('— Sin departamento —','VARIOS'),op:document.getElementById('laborOp').value.replace('— Sin técnico asignado —','Sin técnico asignado'),field:document.getElementById('laborField').value.split(' (')[0],qty:(document.getElementById('laborQty').value||'0')+'.00',price:'—'});
- closeLaborModal(); renderLaborRows(); alert('Demo visual: la mano de obra se agregó a la tabla.');
+
+function openLaborModal(){
+  laborEditId = null;
+  if(laborGetId('laborFormTitulo')) laborGetId('laborFormTitulo').innerHTML = '<i class="bi bi-tools me-2"></i>NUEVA MANO DE OBRA';
+  if(laborGetId('laborId')) laborGetId('laborId').value = '(nuevo)';
+  if(laborGetId('laborOrden')) laborGetId('laborOrden').value = '';
+  if(laborGetId('laborServicio')) laborGetId('laborServicio').value = '';
+  if(laborGetId('laborTecnico')) laborGetId('laborTecnico').value = '';
+  if(laborGetId('laborDescripcion')) laborGetId('laborDescripcion').value = '';
+  if(laborGetId('laborHoras')) laborGetId('laborHoras').value = 1;
+  if(laborGetId('laborPrecio')) laborGetId('laborPrecio').value = 0;
+  if(laborGetId('laborEstado')) laborGetId('laborEstado').value = 'Activo';
+  document.getElementById('laborModal').classList.add('show');
 }
+
+function closeLaborModal(){
+  document.getElementById('laborModal').classList.remove('show');
+}
+
+function calcularSubtotalObra(){
+  const horas = Number(laborGetId('laborHoras')?.value || 0);
+  const precio = Number(laborGetId('laborPrecio')?.value || 0);
+  const subtotal = horas * precio;
+  if(laborGetId('laborSubtotalVista')) laborGetId('laborSubtotalVista').value = subtotal.toFixed(2);
+}
+
+function editarObra(id){
+  const obra = laborRows.find(x => String(x.id) === String(id));
+  if(!obra){
+    alert('No se encontró la mano de obra seleccionada.');
+    return;
+  }
+
+  laborEditId = obra.id;
+  if(laborGetId('laborFormTitulo')) laborGetId('laborFormTitulo').innerHTML = '<i class="bi bi-pencil-square me-2"></i>EDITAR MANO DE OBRA';
+  laborGetId('laborId').value = obra.id;
+  laborGetId('laborOrden').value = obra.orden || '';
+  laborGetId('laborServicio').value = obra.servicio || '';
+  laborGetId('laborTecnico').value = obra.tecnico || '';
+  laborGetId('laborDescripcion').value = obra.descripcion || '';
+  laborGetId('laborHoras').value = obra.horas || 0;
+  laborGetId('laborPrecio').value = obra.precio || 0;
+  laborGetId('laborEstado').value = obra.estado || 'Activo';
+  calcularSubtotalObra();
+
+  document.getElementById('laborModal').classList.add('show');
+}
+
+async function guardarObraDesdeHTML(){
+  const servicio = (laborGetId('laborServicio')?.value || '').trim();
+  if(!servicio){
+    alert('Ingrese la descripción o servicio de mano de obra.');
+    return;
+  }
+
+  const horas = Number(laborGetId('laborHoras')?.value || 0);
+  const precio = Number(laborGetId('laborPrecio')?.value || 0);
+  const subtotal = horas * precio;
+
+  const datos = {
+    id: laborEditId || '',
+    orden: (laborGetId('laborOrden')?.value || '').trim(),
+    servicio: servicio.toUpperCase(),
+    tecnico: (laborGetId('laborTecnico')?.value || '').trim(),
+    descripcion: (laborGetId('laborDescripcion')?.value || '').trim(),
+    horas: horas,
+    precio: precio,
+    subtotal: subtotal,
+    estado: laborGetId('laborEstado')?.value || 'Activo'
+  };
+
+  try{
+    const accion = laborEditId ? 'actualizarObra' : 'guardarObra';
+    const r = await apiTallerPro(accion, datos);
+    if(!r.ok) throw new Error(r.mensaje || 'No se pudo guardar la mano de obra');
+
+    closeLaborModal();
+    await cargarManoObraSheets();
+    alert(laborEditId ? 'Mano de obra actualizada en Google Sheets.' : 'Mano de obra guardada en Google Sheets: ' + (r.id || ''));
+  }catch(err){
+    alert('Error al guardar mano de obra: ' + err.message);
+  }
+}
+
+async function eliminarObraDesdeHTML(id){
+  if(!confirm('¿Deseas inactivar esta mano de obra?')) return;
+
+  try{
+    const r = await apiTallerPro('eliminarObra', { id });
+    if(!r.ok) throw new Error(r.mensaje || 'No se pudo inactivar la mano de obra');
+    await cargarManoObraSheets();
+    alert('Mano de obra marcada como inactiva.');
+  }catch(err){
+    alert('Error al inactivar mano de obra: ' + err.message);
+  }
+}
+
 function createLaborModule(){
- document.getElementById('mano').innerHTML=`
- <div class="mobile-quick-title"><div><b>Mano de obra</b><br><span>Catálogo de servicios técnicos</span></div><i class="bi bi-tools"></i></div>
- <div class="cardx p-4">
-  <div class="labor-toolbar">
-   <div><h4 class="mb-1 fw-bold"><i class="bi bi-tools me-2"></i>Mano de obra</h4><p class="text-muted mb-0">Servicios, departamentos, técnicos, cantidad fija y campo del vehículo.</p></div>
-   <div class="d-flex gap-2 flex-wrap"><button class="btn btn-soft" onclick="renderLaborRows()"><i class="bi bi-arrow-clockwise me-1"></i> Actualizar</button><button class="btn btn-blue" onclick="openLaborModal()"><i class="bi bi-plus-circle me-1"></i> Nueva</button></div>
-  </div>
-  <div class="labor-filters mb-3"><div><label class="subtext">Buscar</label><input id="laborSearch" class="form-control" placeholder="Buscar por descripción..." oninput="renderLaborRows()"></div><div><label class="subtext">Departamento</label><select id="laborFilterDept" class="form-select" onchange="renderLaborRows()"><option>— Todos los departamentos —</option>${laborDepartments.map(d=>`<option>${d}</option>`).join('')}</select></div></div>
-  <div class="table-responsive"><table class="table table-modern align-middle"><thead><tr><th>Id</th><th>Descripción</th><th>Departamento</th><th>Técnico</th><th>Campo vehículo</th><th>Cant. fija</th><th>Precio (tipo)</th><th class="text-end">Acciones</th></tr></thead><tbody id="laborRows"></tbody></table></div>
- </div>
- <div class="modalx-backdrop" id="laborModal"><div class="modalx"><div class="modalx-head"><h3><i class="bi bi-tools me-2"></i>NUEVA MANO DE OBRA</h3><button class="modalx-close" onclick="closeLaborModal()">×</button></div><div class="modalx-body"><div class="row g-3"><div class="col-md-3"><label class="form-label">Id Mano de Obra</label><input class="form-control modalx-id" value="(nuevo)" disabled></div><div class="col-md-9"><label class="form-label">Descripción *</label><input id="laborDesc" class="form-control" placeholder="Ej.: CAMBIO DE PASTILLAS DE FRENO"></div><div class="col-md-6"><label class="form-label">Departamento</label><select id="laborDept" class="form-select">${optionsFrom(laborDepartments,'— Sin departamento —')}</select></div><div class="col-md-6"><label class="form-label">Técnico</label><select id="laborOp" class="form-select">${optionsFrom(laborOperators,'— Sin técnico asignado —')}</select></div><div class="col-md-6"><label class="form-label">Cantidad fija <i class="bi bi-info-circle"></i></label><input id="laborQty" class="form-control" type="number" value="0" min="0"></div><div class="col-md-6"><label class="form-label">Campo vehículo</label><select id="laborField" class="form-select">${laborFields.map(x=>`<option>${x}</option>`).join('')}</select></div></div><div class="modalx-actions"><button class="btn btn-blue" onclick="saveLaborDemo()"><i class="bi bi-save me-1"></i> Guardar</button><button class="btn btn-soft" onclick="closeLaborModal()"><i class="bi bi-x-circle me-1"></i> Cerrar</button></div></div></div></div>`;
- renderLaborRows();
+  document.getElementById('mano').innerHTML = `
+    <div class="mobile-quick-title"><div><b>Mano de obra</b><br><span>Catálogo de servicios técnicos</span></div><i class="bi bi-tools"></i></div>
+    <div class="cardx p-4">
+      <div class="labor-toolbar">
+        <div>
+          <h4 class="mb-1 fw-bold"><i class="bi bi-tools me-2"></i>Mano de obra</h4>
+          <p class="text-muted mb-0">Catálogo de servicios técnicos conectado a Google Sheets, pestaña obras.</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+          <button class="btn btn-soft" onclick="cargarManoObraSheets()"><i class="bi bi-arrow-clockwise me-1"></i> Actualizar</button>
+          <button class="btn btn-blue" onclick="openLaborModal()"><i class="bi bi-plus-circle me-1"></i> Nueva</button>
+        </div>
+      </div>
+
+      <div class="labor-filters mb-3">
+        <div>
+          <label class="subtext">Buscar</label>
+          <input id="laborSearch" class="form-control" placeholder="Buscar por servicio, técnico u orden..." oninput="renderLaborRows()">
+        </div>
+        <div>
+          <label class="subtext">Estado</label>
+          <select id="laborFilterEstado" class="form-select" onchange="renderLaborRows()">
+            <option>— Todos los estados —</option>
+            <option>Activo</option>
+            <option>Inactivo</option>
+            <option>Terminado</option>
+            <option>Pendiente</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-modern align-middle">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Orden</th>
+              <th>Servicio</th>
+              <th>Técnico</th>
+              <th>Descripción</th>
+              <th>Horas</th>
+              <th>Precio</th>
+              <th>Subtotal</th>
+              <th>Estado</th>
+              <th class="text-end">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="laborRows"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="modalx-backdrop" id="laborModal">
+      <div class="modalx">
+        <div class="modalx-head">
+          <h3 id="laborFormTitulo"><i class="bi bi-tools me-2"></i>NUEVA MANO DE OBRA</h3>
+          <button class="modalx-close" onclick="closeLaborModal()">×</button>
+        </div>
+        <div class="modalx-body">
+          <div class="row g-3">
+            <div class="col-md-3">
+              <label class="form-label">Id Mano de Obra</label>
+              <input id="laborId" class="form-control modalx-id" value="(nuevo)" disabled>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Orden</label>
+              <input id="laborOrden" class="form-control" placeholder="Ej.: OT-2026-0002">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Servicio *</label>
+              <input id="laborServicio" class="form-control" placeholder="Ej.: CAMBIO DE PASTILLAS DE FRENO">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Técnico / Operario</label>
+              <input id="laborTecnico" class="form-control" placeholder="Ej.: OMAR">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Estado</label>
+              <select id="laborEstado" class="form-select">
+                <option>Activo</option>
+                <option>Inactivo</option>
+                <option>Pendiente</option>
+                <option>Terminado</option>
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Horas / cantidad</label>
+              <input id="laborHoras" class="form-control" type="number" value="1" min="0" step="0.01" oninput="calcularSubtotalObra()">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Precio unitario</label>
+              <input id="laborPrecio" class="form-control" type="number" value="0" min="0" step="0.01" oninput="calcularSubtotalObra()">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Subtotal</label>
+              <input id="laborSubtotalVista" class="form-control modalx-id" value="0.00" disabled>
+            </div>
+
+            <div class="col-md-12">
+              <label class="form-label">Descripción / observación</label>
+              <textarea id="laborDescripcion" class="form-control" rows="3" placeholder="Detalle del trabajo, departamento, campo vehículo u observación interna"></textarea>
+            </div>
+          </div>
+
+          <div class="modalx-actions">
+            <button class="btn btn-blue" onclick="guardarObraDesdeHTML()"><i class="bi bi-save me-1"></i> Guardar</button>
+            <button class="btn btn-soft" onclick="closeLaborModal()"><i class="bi bi-x-circle me-1"></i> Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  cargarManoObraSheets();
 }
 createLaborModule();
+
 simpleModule('clientes','Clientes','Base comercial y técnica de clientes.',['Nombre','RUC/Cédula','Teléfono','Email','Estado'],[
  ['CRISTIAN ALEJANDRO MORALES','0912345678','0981234567','cliente01@rectipro.demo','<span class="badgex b-ok">Activo</span>'],
  ['EDUARDO JAVIER CASTILLO','0923456789','0992345678','cliente02@rectipro.demo','<span class="badgex b-ok">Activo</span>'],
